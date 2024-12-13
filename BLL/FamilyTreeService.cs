@@ -1,6 +1,4 @@
 ﻿using FamilyTreeBlazor.BLL.DTOs;
-using FamilyTreeBlazor.DAL.Infrastructure;
-using FamilyTreeBlazor.DAL.Entities;
 
 namespace FamilyTreeBlazor.BLL;
 
@@ -69,6 +67,21 @@ public class FamilyTreeService(PersonService personService, RelationshipService 
         return descendant.BirthDateTime.Year - ancestor.BirthDateTime.Year;
     }
 
+    // This method is a bruteforce solution. Testing is needed to evaluate performance and change it potentially
+    public IEnumerable<PersonDTO> FindCommonAncestors(int personId1, int personId2)
+    {
+        if (!_treeCache.Persons.TryGetValue(personId1, out var person1) ||
+            !_treeCache.Persons.TryGetValue(personId2, out var person2))
+        {
+            throw new Exception("Person not found");
+        }
+
+        var ancestors1 = GetAllAncestors(person1);
+        var ancestors2 = GetAllAncestors(person2);
+
+        return ancestors1.Intersect(ancestors2);
+    }
+
     public async Task ResetTreeAsync()
     {
         await _personService.ClearAllAsync();
@@ -86,5 +99,17 @@ public class FamilyTreeService(PersonService personService, RelationshipService 
             }
         }
         return false;
+    }
+    private static HashSet<PersonDTO> GetAllAncestors(PersonDTO person)
+    {
+        var ancestors = new HashSet<PersonDTO>();
+
+        foreach (var parent in person.Parents)
+        {
+            ancestors.Add(parent);
+            ancestors.UnionWith(GetAllAncestors(parent));
+        }
+
+        return ancestors;
     }
 }
