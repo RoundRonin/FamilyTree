@@ -2,15 +2,15 @@
 
 namespace FamilyTreeBlazor.DAL.Entities;
 
-public class Person : IEntity
+public class Person(int Id, string Name, DateTime BirthDateTime, bool Sex) : IEntity
 {
-    public int Id { get; set; }
-    public string Name { get; set; } = "";
-    public DateTime BirthDateTime { get; set; }
-    public bool Sex { get; set; }
+    public int Id { get; set; } = Id;
+    public string Name { get; set; } = Name;
+    public DateTime BirthDateTime { get; set; } = BirthDateTime;
+    public bool Sex { get; set; } = Sex;
 
     // Navigation properties
-    public ICollection<Relationship> ParentRelationships { get; set; }
-    public ICollection<Relationship> ChildRelationships { get; set; }
-    public Relationship SpouseRelationship { get; set; }
+    public ICollection<Relationship> ParentRelationships { get; set; } = [];
+    public ICollection<Relationship> ChildRelationships { get; set; } = [];
+    public Relationship? SpouseRelationship { get; set; }
 }

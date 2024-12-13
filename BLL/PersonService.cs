@@ -1,19 +1,51 @@
 ﻿using FamilyTreeBlazor.BLL.DTOs;
+using FamilyTreeBlazor.DAL.Infrastructure;
+using FamilyTreeBlazor.DAL.Entities;
 
 namespace FamilyTreeBlazor.BLL;
 
-internal class PersonService(TreeCacheDTO Cache)
+public class PersonService(IRepository<Person> personRepository, TreeCacheDTO treeCache)
 {
-    //Добавить сущность в древо; --- 
-    //  Установить отношения (Указать, кто кому приходится родителем, ребенком или супругом);
-    //  Создать новое древо (очищение предыдущего построенного дерева).
-    private TreeCacheDTO _cache = Cache;
+    private readonly IRepository<Person> _personRepository = personRepository;
+    private readonly TreeCacheDTO _treeCache = treeCache;
 
-    public TreeCacheDTO Tree => _cache;
-
-    public void AddPersonToTree(PersonDTO person)
+    public async Task AddPersonAsync(PersonDTO person)
     {
-        _cache.Persons.Add(person.Id, person);
+        var entity = new Person(person.Id, person.Name, person.BirthDateTime, person.Sex);
+        
+        await _personRepository.AddAsync(entity);
+        _treeCache.Persons[person.Id] = person;
     }
 
+    public PersonDTO? GetPersonById(int id)
+    {
+        return _treeCache.Persons.TryGetValue(id, out var person) ? person : null;
+    }
+
+    public async Task<IEnumerable<PersonDTO>> GetAllPersonsAsync() 
+    { 
+        var persons = await _personRepository.GetAllAsync();
+
+        return persons.Select(person => new PersonDTO(person.Id, person.Name, person.BirthDateTime, person.Sex));
+    }
+
+    public async Task UpdatePersonAsync(PersonDTO person)
+    {
+        var entity = new Person(person.Id, person.Name, person.BirthDateTime, person.Sex);
+        
+        await _personRepository.UpdateAsync(entity);
+        _treeCache.Persons[person.Id] = person;
+    }
+
+    public async Task DeletePersonAsync(int id)
+    {
+        await _personRepository.DeleteAsync(id);
+        _treeCache.Persons.Remove(id);
+    }
+
+    public async Task ClearAllAsync()
+    {
+        await _personRepository.TruncateTableAsync();
+    }
+        
 }

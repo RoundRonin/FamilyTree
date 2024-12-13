@@ -4,47 +4,87 @@ using FamilyTreeBlazor.DAL.Entities;
 
 namespace FamilyTreeBlazor.BLL;
 
-internal class FamilyTreeService(TreeCacheDTO Cache)
+public class FamilyTreeService(PersonService personService, RelationshipService relationshipService, TreeCacheDTO treeCache)
 {
-    //Создать сущность “Человек”;
-    //Добавить сущность в древо;
-    //Установить отношения (Указать, кто кому приходится родителем, ребенком или супругом);
-    //Вывести ближайших родственников (родителей и детей); ---
-    //Показать получившееся древо;  ---
-    //Вычислить возраст предка при рождении потомка; 
-    //Создать новое древо (очищение предыдущего построенного дерева).
-    private readonly IRepository<Person> _repository;
-    private readonly TreeCacheDTO _cache = Cache; 
+    private readonly PersonService _personService = personService;
+    private readonly RelationshipService _relationshipService = relationshipService;
+    private readonly TreeCacheDTO _treeCache = treeCache;
 
-    public TreeCacheDTO Tree => _cache;
-
-    public PersonListDTO GetImmediateRelatives(int PersonId)
+    public async Task InitializeTreeAsync()
     {
-        if (!_cache.Persons.TryGetValue(PersonId, out var person))
+        var persons = await _personService.GetAllPersonsAsync();
+        var relationships = await _relationshipService.GetAllRelationshipsAsync();
+
+        foreach (var person in persons)
         {
-            return new();
+            _treeCache.Persons[person.Id] = person;
         }
 
-        PersonListDTO subTree = new();
-
-        List<PersonDTO> children = person.Children;
-        List<PersonDTO> parents = person.Parents;
-            
-        subTree.Persons.AddRange(children);
-        subTree.Persons.AddRange(parents);
-
-        return subTree;
+        foreach (var relationship in relationships)
+        {
+            if (_treeCache.Persons.TryGetValue(relationship.PersonId1, out var person1) &&
+                _treeCache.Persons.TryGetValue(relationship.PersonId2, out var person2))
+            {
+                if (relationship.RelationshipType == DTOs.RelationshipType.Parent)
+                {
+                    person1.Children.Add(person2);
+                    person2.Parents.Add(person1);
+                }
+                else if (relationship.RelationshipType == DTOs.RelationshipType.Spouse)
+                {
+                    person1.Spouse = person2;
+                    person2.Spouse = person1;
+                }
+            }
+        }
     }
 
-    public int GetPredecessorAgeOnBirthOfSuccessor(int PredeccessorId, int SuccessorId)
+    public IEnumerable<PersonDTO> GetImmediateRelatives(int personId)
     {
-        // TODO 
-        return 0;
+        if (!_treeCache.Persons.TryGetValue(personId, out var person))
+        {
+            return [];
+        }
+
+        List<PersonDTO> relatives = [];
+        relatives.AddRange(person.Parents);
+        relatives.AddRange(person.Children);
+
+        return relatives;
     }
 
-    public void CreateNewTree()
+    public int CalculateAncestorAgeAtBirth(int ancestorId, int descendantId)
     {
-        
+        if (!_treeCache.Persons.TryGetValue(ancestorId, out var ancestor) ||
+            !_treeCache.Persons.TryGetValue(descendantId, out var descendant))
+        {
+            throw new Exception("Person not found");
+        }
+
+        if (!IsDescendant(ancestor, descendant))
+        {
+            throw new InvalidOperationException("The specified person is not a descendant of the ancestor.");
+        }
+
+        return descendant.BirthDateTime.Year - ancestor.BirthDateTime.Year;
     }
 
+    public async Task ResetTreeAsync()
+    {
+        await _personService.ClearAllAsync();
+        await _relationshipService.ClearAllAsync();
+        _treeCache.Persons.Clear();
+    }
+
+    private static bool IsDescendant(PersonDTO ancestor, PersonDTO descendant)
+    {
+        foreach (var parent in descendant.Parents)
+        {
+            if (parent.Id == ancestor.Id || IsDescendant(ancestor, parent))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
