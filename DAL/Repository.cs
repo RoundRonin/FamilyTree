@@ -1,8 +1,8 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using DAL.Infrastructure;
+using FamilyTreeBlazor.DAL.Infrastructure;
 
-namespace DAL;
+namespace FamilyTreeBlazor.DAL;
 public class Repository<T> : IRepository<T> where T : class, IEntity
 {
     private readonly DbContext _context;

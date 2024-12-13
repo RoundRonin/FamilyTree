@@ -3,11 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FamilyTreeBlazor", "FamilyTreeBlazor\FamilyTreeBlazor.csproj", "{5C712A57-12CC-41E5-97C0-9CC24FC31EA5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FamilyTreeBlazor.presentation", "FamilyTreeBlazor\FamilyTreeBlazor.presentation.csproj", "{5C712A57-12CC-41E5-97C0-9CC24FC31EA5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E30AB29D-6692-4B8B-855B-C15EA1C0A290} = {E30AB29D-6692-4B8B-855B-C15EA1C0A290}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BLL", "BLL\BLL.csproj", "{E30AB29D-6692-4B8B-855B-C15EA1C0A290}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FamilyTreeBlazor.BLL", "BLL\FamilyTreeBlazor.BLL.csproj", "{E30AB29D-6692-4B8B-855B-C15EA1C0A290}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E603F33A-E011-4D1C-9DCA-6FD6D20BEAFF} = {E603F33A-E011-4D1C-9DCA-6FD6D20BEAFF}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DAL", "DAL\DAL.csproj", "{E603F33A-E011-4D1C-9DCA-6FD6D20BEAFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FamilyTreeBlazor.DAL", "DAL\FamilyTreeBlazor.DAL.csproj", "{E603F33A-E011-4D1C-9DCA-6FD6D20BEAFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
