@@ -1,11 +1,12 @@
 ﻿using FamilyTreeBlazor.BLL.DTOs;
+using FamilyTreeBlazor.BLL.Infrastructure;
 
 namespace FamilyTreeBlazor.BLL;
 
-public class FamilyTreeService(PersonService personService, RelationshipService relationshipService, TreeCacheDTO treeCache)
+public class FamilyTreeService(IPersonService personService, IRelationshipService relationshipService, TreeCacheDTO treeCache) : IFamilyTreeService
 {
-    private readonly PersonService _personService = personService;
-    private readonly RelationshipService _relationshipService = relationshipService;
+    private readonly IPersonService _personService = personService;
+    private readonly IRelationshipService _relationshipService = relationshipService;
     private readonly TreeCacheDTO _treeCache = treeCache;
 
     public async Task InitializeTreeAsync()
@@ -84,8 +85,8 @@ public class FamilyTreeService(PersonService personService, RelationshipService 
 
     public async Task ResetTreeAsync()
     {
-        await _personService.ClearAllAsync();
-        await _relationshipService.ClearAllAsync();
+        await _personService.ClearAllDbAsync();
+        await _relationshipService.ClearAllDbAsync();
         _treeCache.Persons.Clear();
     }
 

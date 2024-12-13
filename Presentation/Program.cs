@@ -1,4 +1,4 @@
-using FamilyTreeBlazor.Components;
+using FamilyTreeBlazor.presentation.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 

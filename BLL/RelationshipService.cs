@@ -1,10 +1,11 @@
 ﻿using FamilyTreeBlazor.BLL.DTOs;
 using FamilyTreeBlazor.DAL.Infrastructure;
 using FamilyTreeBlazor.DAL.Entities;
+using FamilyTreeBlazor.BLL.Infrastructure;
 
 namespace FamilyTreeBlazor.BLL;
 
-public class RelationshipService(IRepository<Relationship> relationshipRepository, TreeCacheDTO treeCache)
+public class RelationshipService(IRepository<Relationship> relationshipRepository, TreeCacheDTO treeCache) : IRelationshipService
 {
     private readonly IRepository<Relationship> _relationshipRepository = relationshipRepository;
     private readonly TreeCacheDTO _treeCache = treeCache;
@@ -61,7 +62,7 @@ public class RelationshipService(IRepository<Relationship> relationshipRepositor
         );
     }
 
-    public async Task ClearAllAsync()
+    public async Task ClearAllDbAsync()
     {
         await _relationshipRepository.TruncateTableAsync();
     }

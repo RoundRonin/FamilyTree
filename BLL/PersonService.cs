@@ -1,10 +1,11 @@
 ﻿using FamilyTreeBlazor.BLL.DTOs;
 using FamilyTreeBlazor.DAL.Infrastructure;
 using FamilyTreeBlazor.DAL.Entities;
+using FamilyTreeBlazor.BLL.Infrastructure;
 
 namespace FamilyTreeBlazor.BLL;
 
-public class PersonService(IRepository<Person> personRepository, TreeCacheDTO treeCache)
+public class PersonService(IRepository<Person> personRepository, TreeCacheDTO treeCache) : IPersonService
 {
     private readonly IRepository<Person> _personRepository = personRepository;
     private readonly TreeCacheDTO _treeCache = treeCache;
@@ -31,6 +32,12 @@ public class PersonService(IRepository<Person> personRepository, TreeCacheDTO tr
 
     public async Task UpdatePersonAsync(PersonDTO person)
     {
+        var existingEntity = await _personRepository.RetrieveByIdAsync(person.Id);
+        if (existingEntity == null)
+        {
+            throw new InvalidOperationException($"Person with ID {person.Id} does not exist.");
+        }
+
         var entity = new Person(person.Id, person.Name, person.BirthDateTime, person.Sex);
         
         await _personRepository.UpdateAsync(entity);
@@ -43,7 +50,7 @@ public class PersonService(IRepository<Person> personRepository, TreeCacheDTO tr
         _treeCache.Persons.Remove(id);
     }
 
-    public async Task ClearAllAsync()
+    public async Task ClearAllDbAsync()
     {
         await _personRepository.TruncateTableAsync();
     }
