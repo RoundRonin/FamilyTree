@@ -1,7 +1,13 @@
 ﻿namespace FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
 
+public enum ViewState
+{
+    Initial,
+    View
+}
+
 public interface IViewToolState : IToolState
 {
-    int? ViewId { get; set; }
+    public ViewState State { get; set; }
 }
 

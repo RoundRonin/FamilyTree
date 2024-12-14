@@ -1,6 +1,6 @@
 ﻿@using FamilyTreeBlazor.BLL.DTOs
 @using FamilyTreeBlazor.presentation.Infrastructure
-@inject IAppStateService AppService
+@inject IAppStateService AppState
 
 <h3>Edit mode</h3>
 
@@ -42,6 +42,6 @@
     public void Cancel()
     {
         //TODO
-        AppService.GetSpecificState<EditToolState>().ToggleEditCreateNew();
+        AppState.GetSpecificState<EditToolState>().State = EditState.ChoosePerson;
     }
 }

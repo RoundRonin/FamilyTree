@@ -1,9 +1,14 @@
 ﻿namespace FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
 
+public enum EditState
+{
+    Initial,
+    ChoosePerson,
+    CreatePerson
+}
+
 public interface IEditToolState : IToolState
 {
-    int? EditId { get; set; }
-    bool EditCreateNew { get; }
-    public void ToggleEditCreateNew();
+    public EditState State { get; set; }
 }
 

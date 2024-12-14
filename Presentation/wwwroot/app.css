@@ -8,6 +8,9 @@
     --secondary-text-color: #acacac;
     --link-color: #a4c7e6;
 
+    --Primary: #7e6fff;
+    --Secondary: #19A98C;
+
     --header-size: 4rem;
 }
 
@@ -66,3 +69,19 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
+
+.outward-border {
+    border: none; /* Remove the default border */
+    box-shadow: 0 0 0 3px var(--Primary); /* Adjust the color and width as needed */
+}
+ 
+.highlight-border {
+    border: 2px solid var(--Primary); /* Customize this as per your needs */
+}
+
+.inward-border {
+    border: none; /* Remove the default border */
+    outline: 0.5rem solid var(--Secondary); /* Adjust the color and width as needed */
+    outline-offset: -0.5rem; /* Negative value to move the border inward */
+}
+

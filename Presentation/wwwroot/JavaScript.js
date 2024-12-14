@@ -1,5 +1,13 @@
 ﻿let draggingOn = false; // Initial value
 
+let blazorClickHandlerReference = null;
+
+function registerBlazorClickHandler(blazorClickHandler) {
+    blazorClickHandlerReference = blazorClickHandler;
+    console.log("Blazor click handler registered");
+}
+
+
 function setDraggingOn(value) {
     draggingOn = value;
     console.log("DraggingOn set to:", draggingOn);
@@ -7,6 +15,9 @@ function setDraggingOn(value) {
 
 // Your existing renderD3Graph function
 async function renderD3Graph(nodes, links, componentName, containerWidth) {
+    console.log(nodes)
+    console.log(links)
+
     const container = d3.select("#tree-container");
     const width = container.node().getBoundingClientRect().width || window.innerWidth;
     const height = container.node().getBoundingClientRect().height || window.innerHeight;
@@ -27,19 +38,19 @@ async function renderD3Graph(nodes, links, componentName, containerWidth) {
     const simulation = d3.forceSimulation(nodes)
         .force("link", d3.forceLink(links).id(d => d.id)
             .distance(d => {
-                if (d.type === "spouse") return 50 * multiplier;
-                if (d.type === "parent-child") return 100 * multiplier;
+                if (d.relationshipType === 1) return 50 * multiplier;
+                if (d.relationshipType === 0) return 100 * multiplier;
                 return 200 * multiplier;
             })
             .strength(d => {
-                if (d.type === "spouse") return 1;
-                if (d.type === "parent-child") return 0.7;
+                if (d.relationshipType === 1) return 1;
+                if (d.relationshipType === 0) return 0.7;
                 return 0.3;
             })
         )
         .force("charge", d3.forceManyBody().strength(50))
         .force("collide", d3.forceCollide().radius(containerWidth / 2 + 20).strength(1))
-        .force("y", d3.forceY(d => (d.depth + 1) * levelHeight).strength(3))
+        .force("y", d3.forceY(d => (d.treeDepth + 1) * levelHeight).strength(3))
         .force("x", d3.forceX(width / 2).strength(0.1))
         .on("tick", ticked);
 
@@ -58,7 +69,7 @@ async function renderD3Graph(nodes, links, componentName, containerWidth) {
                     .attr('height', 120)
                     .attr('x', d => d.x - containerWidth / 2)
                     .attr('y', d => d.y - 60)
-                    .html(d => `<div id="person-card-container-${d.id}" class="blazor-component"></div>`)
+                    .html(d => `<div id="person-card-container-${d.id}" class="blazor-component" onclick="invokeBlazorClick('${d.id}')"></div>`)
                     .call(d3.drag()
                         .filter(() => draggingOn)
                         .on("start", dragstarted)
@@ -77,7 +88,7 @@ async function renderD3Graph(nodes, links, componentName, containerWidth) {
         nodes.forEach(node => {
             let container = document.getElementById(`person-card-container-${node.id}`);
             if (!container.childElementCount) {
-                const parameters = { Name: node.name };
+                const parameters = { Person: node.person };
                 Blazor.rootComponents.add(container, componentName, parameters)
                     .then(() => console.log(`Component inserted for ${node.name}`))
                     .catch(err => console.error(`Error inserting component for ${node.name}: ${err}`));
@@ -100,5 +111,28 @@ async function renderD3Graph(nodes, links, componentName, containerWidth) {
         if (!event.active) simulation.alphaTarget(0);
         d.fx = null;
         d.fy = null;
+    }
+}
+
+//function invokeBlazorClick(personId) {
+//    console.log(`Clicked in person with id: ${personId}`);
+//    if (!draggingOn) {
+//        console.log("Passing the click to dotNet");
+//        DotNet.invokeMethodAsync('FamilyTreeBlazor.presentation', 'BlazorClickHandler', personId);
+//    }
+//    else 
+//        console.log("Turn dragging off to click");
+//}
+
+function invokeBlazorClick(personId) {
+    console.log(`Clicked on person with id: ${personId}`);
+    if (!draggingOn) {
+        console.log("Passing the click to dotNet");
+        //Blazor.BlazorClickHandler(personId);
+        blazorClickHandlerReference.invokeMethodAsync('BlazorClickHandler', personId)
+            .then(() => console.log("BlazorClickHandler invoked successfully"))
+            .catch(err => console.error("Error invoking BlazorClickHandler:", err));
+    } else {
+        console.log("Turn dragging off to click");
     }
 }

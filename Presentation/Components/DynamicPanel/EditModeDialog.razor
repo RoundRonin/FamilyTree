@@ -10,6 +10,6 @@
 @code {
     public void CreatePerson()
     {
-        AppState.GetSpecificState<EditToolState>().ToggleEditCreateNew();
+        AppState.GetSpecificState<EditToolState>().State = EditState.CreatePerson;
     }
 }

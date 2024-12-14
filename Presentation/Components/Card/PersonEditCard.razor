@@ -22,7 +22,10 @@
 
 @code {
     [Parameter]
+    public CardState State { get; set; } = CardState.Default;
+    [Parameter]
     public string Name { get; set; } = "Default";
+
 
     private void AddChild()
     {

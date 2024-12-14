@@ -1,18 +1,18 @@
-﻿@rendermode InteractiveServer
+﻿@using FamilyTreeBlazor.presentation.Entities
+@rendermode InteractiveServer
 @inject IAppStateService AppState
 
-<div class="panel"> 
-    @AppState.CurrentToolState.RenderCard(Name, BirthDay) 
+<div class="@(AppState.DraggingOn ? "panel" : "panel-cursor")"> 
+    @AppState.CurrentToolState.RenderCard(Person) 
 </div>
 
 @code {
     [Parameter]
-    public string Name { get; set; } = "Default";
-    [Parameter]
-    public DateTime BirthDay { get; set; } = DateTime.MinValue;
+    public required Person Person { get; set; }
 
     protected override void OnInitialized()
     {
+        AppState.
         AppState.OnChange += StateHasChanged; // Subscribe to state changes
     }
 

@@ -1,4 +1,5 @@
-﻿@using FamilyTreeBlazor.BLL.DTOs
+﻿@using FamilyTreeBlazor.presentation.Entities
+@using FamilyTreeBlazor.BLL.DTOs
 
 @if (Person != null) {
     <LabelValuePair Label="name" Value=@Person.Name/>
@@ -12,5 +13,5 @@
 }
 
 @code {
-    [Parameter] public PersonDTO? Person { get; set; }
+    [Parameter] public Person? Person { get; set; }
 }

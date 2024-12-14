@@ -11,3 +11,16 @@
     user-select: none; 
     cursor: inherit;
 }
+
+.panel-coursor {
+    cursor: pointer;
+}
+
+.panel-coursor:hover {
+    cursor: pointer;
+}
+
+.panel-coursor *, .panel-coursor *:hover { 
+    user-select: none; 
+    cursor: inherit;
+}

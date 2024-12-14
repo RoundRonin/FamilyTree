@@ -1,8 +1,8 @@
-﻿@using MudBlazor
-@using System
+﻿@using System
+@inject IAppStateService AppState
 
 <div class="person-card">
-    <MudCard>
+    <MudCard Class="@(State == CardState.HighlightedChosen ? "inward-border" : "")">
         <MudCardContent>
             <h6>@Name</h6>
             <p>@BirthDay.Year (@AgeHelper.GetAgeFromBirthDay(BirthDay))</p>
@@ -12,7 +12,19 @@
 
 @code {
     [Parameter]
+    public CardState State { get; set; } = CardState.Default;
+    [Parameter]
     public string Name { get; set; } = "Default";
     [Parameter]
     public DateTime BirthDay { get; set; } = DateTime.MinValue;
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged; // Subscribe to state changes
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged; // Unsubscribe from state changes
+    }
 }

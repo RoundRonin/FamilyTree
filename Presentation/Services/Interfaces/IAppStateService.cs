@@ -2,6 +2,16 @@
 
 namespace FamilyTreeBlazor.presentation.Services.Interfaces;
 
+public enum CardState
+{
+    Default,
+    HighlightedChosen,
+    ChooseSpouse,
+    ChooseChild,
+    ChooseParent,
+    HighlightedCommonAncestor,
+}
+
 public interface IAppStateService
 {
     IToolState CurrentToolState { get; set; }
