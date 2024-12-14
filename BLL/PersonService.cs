@@ -12,10 +12,16 @@ public class PersonService(IRepository<Person> personRepository, TreeCacheDTO tr
 
     public async Task AddPersonAsync(PersonDTO person)
     {
-        var entity = new Person(person.Id, person.Name, person.BirthDateTime, person.Sex);
-        
+        var entity = new Person(person.Name, person.BirthDateTime, person.Sex);
         await _personRepository.AddAsync(entity);
-        _treeCache.Persons[person.Id] = person;
+
+        person.Id = entity.Id;
+        if (person.Id == null)
+        {
+            throw new Exception("Id is not set.. Internal error");
+        }
+
+        _treeCache.Persons[person.Id.Value] = person;
     }
 
     public PersonDTO? GetPersonById(int id)
@@ -27,21 +33,28 @@ public class PersonService(IRepository<Person> personRepository, TreeCacheDTO tr
     { 
         var persons = await _personRepository.GetAllAsync();
 
-        return persons.Select(person => new PersonDTO(person.Id, person.Name, person.BirthDateTime, person.Sex));
+        return persons.Select(person => new PersonDTO(person.Name, person.BirthDateTime, person.Sex, person.Id));
     }
 
     public async Task UpdatePersonAsync(PersonDTO person)
     {
-        var existingEntity = await _personRepository.RetrieveByIdAsync(person.Id);
+        if (!person.Id.HasValue) 
+        { 
+            throw new ArgumentException("ID must be provided for update operations."); 
+        }
+
+        var existingEntity = await _personRepository.RetrieveByIdAsync(person.Id.Value);
         if (existingEntity == null)
         {
             throw new InvalidOperationException($"Person with ID {person.Id} does not exist.");
         }
 
-        var entity = new Person(person.Id, person.Name, person.BirthDateTime, person.Sex);
+        existingEntity.Name = person.Name;
+        existingEntity.BirthDateTime = person.BirthDateTime;
+        existingEntity.Sex = person.Sex;
         
-        await _personRepository.UpdateAsync(entity);
-        _treeCache.Persons[person.Id] = person;
+        await _personRepository.UpdateAsync(existingEntity);
+        _treeCache.Persons[person.Id.Value] = person;
     }
 
     public async Task DeletePersonAsync(int id)

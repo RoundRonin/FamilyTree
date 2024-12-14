@@ -28,7 +28,7 @@ public class FamilyTreeServiceTests
         // Arrange
         var persons = new List<PersonDTO>
         {
-            new PersonDTO(1, "John Doe", new DateTime(1980, 1, 1), true)
+            new("John Doe", new DateTime(1980, 1, 1), true, 1)
         };
         var relationships = new List<RelationshipDTO>();
 
@@ -48,16 +48,16 @@ public class FamilyTreeServiceTests
         // Arrange
         var persons = new List<PersonDTO>
         {
-            new PersonDTO(1, "John Doe", new DateTime(1980, 1, 1), true),
-            new PersonDTO(2, "Jane Doe", new DateTime(1985, 1, 1), false),
-            new PersonDTO(3, "Child1", new DateTime(2010, 1, 1), true),
-            new PersonDTO(4, "Child2", new DateTime(2015, 1, 1), false)
+            new("John Doe", new DateTime(1980, 1, 1), true, 1),
+            new("Jane Doe", new DateTime(1985, 1, 1), false, 2),
+            new("Child1", new DateTime(2010, 1, 1), true, 3),
+            new("Child2", new DateTime(2015, 1, 1), false, 4)
         };
         var relationships = new List<RelationshipDTO>
         {
-            new RelationshipDTO(1, 1, 3, RelationshipType.Parent),
-            new RelationshipDTO(2, 1, 4, RelationshipType.Parent),
-            new RelationshipDTO(3, 2, 3, RelationshipType.Parent),
+            new(1, 1, 3, RelationshipType.Parent),
+            new(2, 1, 4, RelationshipType.Parent),
+            new(3, 2, 3, RelationshipType.Parent),
             new RelationshipDTO(4, 2, 4, RelationshipType.Parent),
             new RelationshipDTO(5, 1, 2, RelationshipType.Spouse)
         };
@@ -80,38 +80,38 @@ public class FamilyTreeServiceTests
     public void GetImmediateRelatives_ShouldReturnRelatives()
     {
         // Arrange
-        var person = new PersonDTO(1, "John Doe", new DateTime(1980, 1, 1), true);
-        var child = new PersonDTO(2, "Child", new DateTime(2010, 1, 1), true);
+        var person = new PersonDTO("John Doe", new DateTime(1980, 1, 1), true, 1);
+        var child = new PersonDTO("Child", new DateTime(2010, 1, 1), true, 2);
         person.Children.Add(child);
         child.Parents.Add(person);
-        _treeCache.Persons[person.Id] = person;
-        _treeCache.Persons[child.Id] = child;
+        _treeCache.Persons[person.Id.Value] = person;
+        _treeCache.Persons[child.Id.Value] = child;
 
         // Act
         var result = _familyTreeService.GetImmediateRelatives(1);
 
         // Assert
         Assert.Contains(child, result);
-        Assert.Contains(person, _treeCache.Persons[child.Id].Parents);
+        Assert.Contains(person, _treeCache.Persons[child.Id.Value].Parents);
     }
 
     [Fact]
     public void GetImmediateRelatives_WithMultipleRelatives_ShouldReturnAllRelatives()
     {
         // Arrange
-        var person = new PersonDTO(1, "John Doe", new DateTime(1980, 1, 1), true);
-        var child1 = new PersonDTO(2, "Child1", new DateTime(2010, 1, 1), true);
-        var child2 = new PersonDTO(3, "Child2", new DateTime(2015, 1, 1), false);
-        var parent = new PersonDTO(4, "Parent", new DateTime(1950, 1, 1), true);
+        var person = new PersonDTO("John Doe", new DateTime(1980, 1, 1), true, 1);
+        var child1 = new PersonDTO("Child1", new DateTime(2010, 1, 1), true, 2);
+        var child2 = new PersonDTO("Child2", new DateTime(2015, 1, 1), false, 3);
+        var parent = new PersonDTO("Parent", new DateTime(1950, 1, 1), true, 4);
         person.Children.Add(child1);
         person.Children.Add(child2);
         person.Parents.Add(parent);
         child1.Parents.Add(person);
         child2.Parents.Add(person);
-        _treeCache.Persons[person.Id] = person;
-        _treeCache.Persons[child1.Id] = child1;
-        _treeCache.Persons[child2.Id] = child2;
-        _treeCache.Persons[parent.Id] = parent;
+        _treeCache.Persons[person.Id.Value] = person;
+        _treeCache.Persons[child1.Id.Value] = child1;
+        _treeCache.Persons[child2.Id.Value] = child2;
+        _treeCache.Persons[parent.Id.Value] = parent;
 
         // Act
         var result = _familyTreeService.GetImmediateRelatives(1);
@@ -127,12 +127,12 @@ public class FamilyTreeServiceTests
     public void CalculateAncestorAgeAtBirth_ShouldCalculateAge()
     {
         // Arrange
-        var ancestor = new PersonDTO(1, "Ancestor", new DateTime(1950, 1, 1), true);
-        var descendant = new PersonDTO(2, "Descendant", new DateTime(1980, 1, 1), true);
+        var ancestor = new PersonDTO("Ancestor", new DateTime(1950, 1, 1), true, 1);
+        var descendant = new PersonDTO("Descendant", new DateTime(1980, 1, 1), true, 2);
         ancestor.Children.Add(descendant);
         descendant.Parents.Add(ancestor);
-        _treeCache.Persons[ancestor.Id] = ancestor;
-        _treeCache.Persons[descendant.Id] = descendant;
+        _treeCache.Persons[ancestor.Id.Value] = ancestor;
+        _treeCache.Persons[descendant.Id.Value] = descendant;
 
         // Act
         var age = _familyTreeService.CalculateAncestorAgeAtBirth(1, 2);
@@ -145,16 +145,16 @@ public class FamilyTreeServiceTests
     public void CalculateAncestorAgeAtBirth_WithDistantAncestor_ShouldCalculateAge()
     {
         // Arrange
-        var ancestor = new PersonDTO(1, "Ancestor", new DateTime(1950, 1, 1), true);
-        var parent = new PersonDTO(2, "Parent", new DateTime(1970, 1, 1), true);
-        var descendant = new PersonDTO(3, "Descendant", new DateTime(2000, 1, 1), true);
+        var ancestor = new PersonDTO("Ancestor", new DateTime(1950, 1, 1), true, 1);
+        var parent = new PersonDTO("Parent", new DateTime(1970, 1, 1), true, 2);
+        var descendant = new PersonDTO("Descendant", new DateTime(2000, 1, 1), true, 3);
         ancestor.Children.Add(parent);
         parent.Parents.Add(ancestor);
         parent.Children.Add(descendant);
         descendant.Parents.Add(parent);
-        _treeCache.Persons[ancestor.Id] = ancestor;
-        _treeCache.Persons[parent.Id] = parent;
-        _treeCache.Persons[descendant.Id] = descendant;
+        _treeCache.Persons[ancestor.Id.Value] = ancestor;
+        _treeCache.Persons[parent.Id.Value] = parent;
+        _treeCache.Persons[descendant.Id.Value] = descendant;
 
         // Act
         var age = _familyTreeService.CalculateAncestorAgeAtBirth(1, 3);
@@ -179,8 +179,8 @@ public class FamilyTreeServiceTests
     public async Task ResetTreeAsync_AfterMultipleOperations_ShouldClearTree()
     {
         // Arrange
-        var person = new PersonDTO(1, "John Doe", new DateTime(1980, 1, 1), true);
-        _treeCache.Persons[person.Id] = person;
+        var person = new PersonDTO("John Doe", new DateTime(1980, 1, 1), true, 1);
+        _treeCache.Persons[person.Id.Value] = person;
 
         // Act
         await _familyTreeService.ResetTreeAsync();
@@ -196,16 +196,16 @@ public class FamilyTreeServiceTests
     public void FindCommonAncestors_ShouldReturnCommonAncestors()
     {
         // Arrange
-        var ancestor = new PersonDTO(1, "Common Ancestor", new DateTime(1950, 1, 1), true);
-        var person1 = new PersonDTO(2, "Person1", new DateTime(1980, 1, 1), true);
-        var person2 = new PersonDTO(3, "Person2", new DateTime(1985, 1, 1), false);
+        var ancestor = new PersonDTO("Common Ancestor", new DateTime(1950, 1, 1), true, 1);
+        var person1 = new PersonDTO("Person1", new DateTime(1980, 1, 1), true, 2);
+        var person2 = new PersonDTO("Person2", new DateTime(1985, 1, 1), false, 3);
         ancestor.Children.Add(person1);
         ancestor.Children.Add(person2);
         person1.Parents.Add(ancestor);
         person2.Parents.Add(ancestor);
-        _treeCache.Persons[ancestor.Id] = ancestor;
-        _treeCache.Persons[person1.Id] = person1;
-        _treeCache.Persons[person2.Id] = person2;
+        _treeCache.Persons[ancestor.Id.Value] = ancestor;
+        _treeCache.Persons[person1.Id.Value] = person1;
+        _treeCache.Persons[person2.Id.Value] = person2;
 
         // Act
         var result = _familyTreeService.FindCommonAncestors(2, 3);
@@ -218,11 +218,11 @@ public class FamilyTreeServiceTests
     public void FindCommonAncestors_WithMultipleAncestors_ShouldReturnAllCommonAncestors()
     {
         // Arrange
-        var commonAncestor1 = new PersonDTO(1, "Common Ancestor1", new DateTime(1940, 1, 1), true);
-        var parent1 = new PersonDTO(3, "Parent1", new DateTime(1965, 1, 1), true);
-        var parent2 = new PersonDTO(4, "Parent2", new DateTime(1970, 1, 1), false);
-        var person1 = new PersonDTO(5, "Person1", new DateTime(1990, 1, 1), true);
-        var person2 = new PersonDTO(6, "Person2", new DateTime(1995, 1, 1), false);
+        var commonAncestor1 = new PersonDTO("Common Ancestor1", new DateTime(1940, 1, 1), true, 1);
+        var parent1 = new PersonDTO("Parent1", new DateTime(1965, 1, 1), true, 3);
+        var parent2 = new PersonDTO("Parent2", new DateTime(1970, 1, 1), false, 4);
+        var person1 = new PersonDTO("Person1", new DateTime(1990, 1, 1), true, 5);
+        var person2 = new PersonDTO("Person2", new DateTime(1995, 1, 1), false, 6);
 
         commonAncestor1.Children.Add(parent1);
         commonAncestor1.Children.Add(parent2);
@@ -233,11 +233,11 @@ public class FamilyTreeServiceTests
         person1.Parents.Add(parent1);
         person2.Parents.Add(parent2);
 
-        _treeCache.Persons[commonAncestor1.Id] = commonAncestor1;
-        _treeCache.Persons[parent1.Id] = parent1;
-        _treeCache.Persons[parent2.Id] = parent2;
-        _treeCache.Persons[person1.Id] = person1;
-        _treeCache.Persons[person2.Id] = person2;
+        _treeCache.Persons[commonAncestor1.Id.Value] = commonAncestor1;
+        _treeCache.Persons[parent1.Id.Value] = parent1;
+        _treeCache.Persons[parent2.Id.Value] = parent2;
+        _treeCache.Persons[person1.Id.Value] = person1;
+        _treeCache.Persons[person2.Id.Value] = person2;
 
         // Act
         var result = _familyTreeService.FindCommonAncestors(5, 6);

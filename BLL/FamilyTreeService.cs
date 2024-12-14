@@ -16,7 +16,8 @@ public class FamilyTreeService(IPersonService personService, IRelationshipServic
 
         foreach (var person in persons)
         {
-            _treeCache.Persons[person.Id] = person;
+            if (person.Id == null) throw new Exception("Person has no Id.. Internal error");
+            _treeCache.Persons[person.Id.Value] = person;
         }
 
         foreach (var relationship in relationships)
@@ -24,12 +25,12 @@ public class FamilyTreeService(IPersonService personService, IRelationshipServic
             if (_treeCache.Persons.TryGetValue(relationship.PersonId1, out var person1) &&
                 _treeCache.Persons.TryGetValue(relationship.PersonId2, out var person2))
             {
-                if (relationship.RelationshipType == DTOs.RelationshipType.Parent)
+                if (relationship.RelationshipType == RelationshipType.Parent)
                 {
                     person1.Children.Add(person2);
                     person2.Parents.Add(person1);
                 }
-                else if (relationship.RelationshipType == DTOs.RelationshipType.Spouse)
+                else if (relationship.RelationshipType == RelationshipType.Spouse)
                 {
                     person1.Spouse = person2;
                     person2.Spouse = person1;

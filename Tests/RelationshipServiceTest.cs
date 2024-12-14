@@ -25,13 +25,13 @@ public class RelationshipServiceTests
     public async Task AddParentChildRelationshipAsync_ShouldAddRelationship()
     {
         // Arrange
-        var parent = new PersonDTO(1, "Parent", new DateTime(1950, 1, 1), true);
-        var child = new PersonDTO(2, "Child", new DateTime(1980, 1, 1), true);
-        _treeCache.Persons[parent.Id] = parent;
-        _treeCache.Persons[child.Id] = child;
+        var parent = new PersonDTO("Parent", new DateTime(1950, 1, 1), true, 1);
+        var child = new PersonDTO("Child", new DateTime(1980, 1, 1), true, 2);
+        _treeCache.Persons[parent.Id.Value] = parent;
+        _treeCache.Persons[child.Id.Value] = child;
 
         // Act
-        await _relationshipService.AddParentChildRelationshipAsync(parent.Id, child.Id);
+        await _relationshipService.AddParentChildRelationshipAsync(parent.Id.Value, child.Id.Value);
 
         // Assert
         _relationshipRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Relationship>()), Times.Once);
@@ -43,16 +43,16 @@ public class RelationshipServiceTests
     public async Task AddParentChildRelationshipAsync_WithMultipleRelations_ShouldAddAllRelationships()
     {
         // Arrange
-        var parent1 = new PersonDTO(1, "Parent1", new DateTime(1950, 1, 1), true);
-        var parent2 = new PersonDTO(2, "Parent2", new DateTime(1955, 1, 1), false);
-        var child = new PersonDTO(3, "Child", new DateTime(1980, 1, 1), true);
-        _treeCache.Persons[parent1.Id] = parent1;
-        _treeCache.Persons[parent2.Id] = parent2;
-        _treeCache.Persons[child.Id] = child;
+        var parent1 = new PersonDTO("Parent1", new DateTime(1950, 1, 1), true, 1);
+        var parent2 = new PersonDTO("Parent2", new DateTime(1955, 1, 1), false, 2);
+        var child = new PersonDTO("Child", new DateTime(1980, 1, 1), true, 3);
+        _treeCache.Persons[parent1.Id.Value] = parent1;
+        _treeCache.Persons[parent2.Id.Value] = parent2;
+        _treeCache.Persons[child.Id.Value] = child;
 
         // Act
-        await _relationshipService.AddParentChildRelationshipAsync(parent1.Id, child.Id);
-        await _relationshipService.AddParentChildRelationshipAsync(parent2.Id, child.Id);
+        await _relationshipService.AddParentChildRelationshipAsync(parent1.Id.Value, child.Id.Value);
+        await _relationshipService.AddParentChildRelationshipAsync(parent2.Id.Value, child.Id.Value);
 
         // Assert
         _relationshipRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Relationship>()), Times.Exactly(2));
@@ -67,13 +67,13 @@ public class RelationshipServiceTests
     public async Task AddSpouseRelationshipAsync_ShouldAddRelationship()
     {
         // Arrange
-        var person1 = new PersonDTO(1, "Person1", new DateTime(1950, 1, 1), true);
-        var person2 = new PersonDTO(2, "Person2", new DateTime(1950, 1, 1), false);
-        _treeCache.Persons[person1.Id] = person1;
-        _treeCache.Persons[person2.Id] = person2;
+        var person1 = new PersonDTO("Person1", new DateTime(1950, 1, 1), true, 1);
+        var person2 = new PersonDTO("Person2", new DateTime(1950, 1, 1), false, 2);
+        _treeCache.Persons[person1.Id.Value] = person1;
+        _treeCache.Persons[person2.Id.Value] = person2;
 
         // Act
-        await _relationshipService.AddSpouseRelationshipAsync(person1.Id, person2.Id);
+        await _relationshipService.AddSpouseRelationshipAsync(person1.Id.Value, person2.Id.Value);
 
         // Assert
         _relationshipRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Relationship>()), Times.Once);
@@ -85,18 +85,18 @@ public class RelationshipServiceTests
     public async Task AddSpouseRelationshipAsync_WithMultipleRelations_ShouldAddAllRelationships()
     {
         // Arrange
-        var person1 = new PersonDTO(1, "Person1", new DateTime(1950, 1, 1), true);
-        var person2 = new PersonDTO(2, "Person2", new DateTime(1950, 1, 1), false);
-        var person3 = new PersonDTO(3, "Person3", new DateTime(1955, 1, 1), false);
-        var person4 = new PersonDTO(4, "Person4", new DateTime(1955, 1, 1), true);
-        _treeCache.Persons[person1.Id] = person1;
-        _treeCache.Persons[person2.Id] = person2;
-        _treeCache.Persons[person3.Id] = person3;
-        _treeCache.Persons[person4.Id] = person4;
+        var person1 = new PersonDTO("Person1", new DateTime(1950, 1, 1), true, 1);
+        var person2 = new PersonDTO("Person2", new DateTime(1950, 1, 1), false, 2);
+        var person3 = new PersonDTO("Person3", new DateTime(1955, 1, 1), false, 3);
+        var person4 = new PersonDTO("Person4", new DateTime(1955, 1, 1), true, 4);
+        _treeCache.Persons[person1.Id.Value] = person1;
+        _treeCache.Persons[person2.Id.Value] = person2;
+        _treeCache.Persons[person3.Id.Value] = person3;
+        _treeCache.Persons[person4.Id.Value] = person4;
 
         // Act
-        await _relationshipService.AddSpouseRelationshipAsync(person1.Id, person2.Id);
-        await _relationshipService.AddSpouseRelationshipAsync(person3.Id, person4.Id);
+        await _relationshipService.AddSpouseRelationshipAsync(person1.Id.Value, person2.Id.Value);
+        await _relationshipService.AddSpouseRelationshipAsync(person3.Id.Value, person4.Id.Value);
 
         // Assert
         _relationshipRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Relationship>()), Times.Exactly(2));

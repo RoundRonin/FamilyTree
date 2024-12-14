@@ -25,24 +25,24 @@ public class PersonServiceTests
     public async Task AddPersonAsync_ShouldAddPerson()
     {
         // Arrange
-        var person = new PersonDTO(1, "John Doe", new DateTime(1980, 1, 1), true);
+        var person = new PersonDTO("John Doe", new DateTime(1980, 1, 1), true, 1);
 
         // Act
         await _personService.AddPersonAsync(person);
 
         // Assert
         _personRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Person>()), Times.Once);
-        Assert.True(_treeCache.Persons.ContainsKey(person.Id));
+        Assert.True(_treeCache.Persons.ContainsKey(person.Id.Value));
     }
 
     [Fact]
     public async Task AddPersonAsync_WithExistingRelationships_ShouldAddPersonWithRelationships()
     {
         // Arrange
-        var parent = new PersonDTO(2, "Jane Doe", new DateTime(1955, 1, 1), false);
-        _treeCache.Persons[parent.Id] = parent;
+        var parent = new PersonDTO("Jane Doe", new DateTime(1955, 1, 1), false, 2);
+        _treeCache.Persons[parent.Id.Value] = parent;
 
-        var person = new PersonDTO(1, "John Doe", new DateTime(1980, 1, 1), true)
+        var person = new PersonDTO("John Doe", new DateTime(1980, 1, 1), true, 1)
         {
             Parents = new List<PersonDTO> { parent }
         };
@@ -52,7 +52,7 @@ public class PersonServiceTests
 
         // Assert
         _personRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<Person>()), Times.Once);
-        Assert.True(_treeCache.Persons.ContainsKey(person.Id));
+        Assert.True(_treeCache.Persons.ContainsKey(person.Id.Value));
         Assert.Contains(parent, person.Parents);
     }
 
@@ -61,15 +61,15 @@ public class PersonServiceTests
     public void GetPersonById_ShouldReturnPerson()
     {
         // Arrange
-        var person = new PersonDTO(1, "John Doe", new DateTime(1980, 1, 1), true);
-        _treeCache.Persons[person.Id] = person;
+        var person = new PersonDTO("John Doe", new DateTime(1980, 1, 1), true, 1);
+        _treeCache.Persons[person.Id.Value] = person;
 
         // Act
         var result = _personService.GetPersonById(1);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(person.Id, result.Id);
+        Assert.Equal(person.Id.Value, result.Id.Value);
     }
 
     [Fact]
@@ -89,8 +89,8 @@ public class PersonServiceTests
         // Arrange
         var persons = new List<Person>
         {
-            new Person(1, "John Doe", new DateTime(1980, 1, 1), true),
-            new Person(2, "Jane Doe", new DateTime(1955, 1, 1), false)
+            new("John Doe", new DateTime(1980, 1, 1), true),
+            new("Jane Doe", new DateTime(1955, 1, 1), false)
         };
         _personRepositoryMock.Setup(repo => repo.GetAllAsync()).ReturnsAsync(persons);
 
@@ -119,33 +119,34 @@ public class PersonServiceTests
     public async Task UpdatePersonAsync_ShouldUpdatePerson()
     {
         // Arrange
-        var person = new PersonDTO(1, "John Doe", new DateTime(1980, 1, 1), true);
-        var personEntity = new Person(person.Id, person.Name, person.BirthDateTime, person.Sex);
+        var personDTO = new PersonDTO("John Doe", new DateTime(1980, 1, 1), true, 1);
+        var person = new Person(personDTO.Name, personDTO.BirthDateTime, personDTO.Sex);
+        person.Id = personDTO.Id.Value;
         
-        _treeCache.Persons[person.Id] = person;
-        _personRepositoryMock.Setup(repo => repo.RetrieveByIdAsync(person.Id)).ReturnsAsync(personEntity);
+        _treeCache.Persons[personDTO.Id.Value] = personDTO;
+        _personRepositoryMock.Setup(repo => repo.RetrieveByIdAsync(personDTO.Id.Value)).ReturnsAsync(person);
 
-        var updatedPerson = new PersonDTO(1, "John Updated", new DateTime(1980, 1, 1), true);
+        var updatedPerson = new PersonDTO("John Updated", new DateTime(1980, 1, 1), true, 1);
 
         // Act
         await _personService.UpdatePersonAsync(updatedPerson);
 
         // Assert
         _personRepositoryMock.Verify(repo => repo.UpdateAsync(It.IsAny<Person>()), Times.Once);
-        Assert.Equal("John Updated", _treeCache.Persons[person.Id].Name);
+        Assert.Equal("John Updated", _treeCache.Persons[personDTO.Id.Value].Name);
     }
 
     [Fact]
     public async Task UpdatePersonAsync_NonExistentPerson_ShouldThrowException()
     {
         // Arrange
-        var updatedPerson = new PersonDTO(99, "Non Existent", new DateTime(1980, 1, 1), true);
-        _personRepositoryMock.Setup(repo => repo.RetrieveByIdAsync(updatedPerson.Id)).ReturnsAsync((Person)null);
+        var updatedPerson = new PersonDTO("Non Existent", new DateTime(1980, 1, 1), true, 99);
+        _personRepositoryMock.Setup(repo => repo.RetrieveByIdAsync(updatedPerson.Id.Value)).ReturnsAsync((Person)null);
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => _personService.UpdatePersonAsync(updatedPerson));
 
-        Assert.Equal($"Person with ID {updatedPerson.Id} does not exist.", exception.Message);
+        Assert.Equal($"Person with ID {updatedPerson.Id.Value} does not exist.", exception.Message);
         _personRepositoryMock.Verify(repo => repo.UpdateAsync(It.IsAny<Person>()), Times.Never);
     }
 
@@ -155,15 +156,15 @@ public class PersonServiceTests
     public async Task DeletePersonAsync_ShouldDeletePerson()
     {
         // Arrange
-        var person = new PersonDTO(1, "John Doe", new DateTime(1980, 1, 1), true);
-        _treeCache.Persons[person.Id] = person;
+        var person = new PersonDTO("John Doe", new DateTime(1980, 1, 1), true, 1);
+        _treeCache.Persons[person.Id.Value] = person;
 
         // Act
-        await _personService.DeletePersonAsync(person.Id);
+        await _personService.DeletePersonAsync(person.Id.Value);
 
         // Assert
-        _personRepositoryMock.Verify(repo => repo.DeleteAsync(person.Id), Times.Once);
-        Assert.False(_treeCache.Persons.ContainsKey(person.Id));
+        _personRepositoryMock.Verify(repo => repo.DeleteAsync(person.Id.Value), Times.Once);
+        Assert.False(_treeCache.Persons.ContainsKey(person.Id.Value));
     }
 
     [Fact]
@@ -192,8 +193,8 @@ public class PersonServiceTests
     public async Task ClearAllAsync_AfterMultipleOperations_ShouldClearAllPersons()
     {
         // Arrange
-        var person1 = new PersonDTO(1, "John Doe", new DateTime(1980, 1, 1), true);
-        var person2 = new PersonDTO(2, "Jane Doe", new DateTime(1955, 1, 1), false);
+        var person1 = new PersonDTO("John Doe", new DateTime(1980, 1, 1), true);
+        var person2 = new PersonDTO("Jane Doe", new DateTime(1955, 1, 1), false);
         await _personService.AddPersonAsync(person1);
         await _personService.AddPersonAsync(person2);
 

@@ -9,6 +9,7 @@ public class PersonEntityTypeConfiguration : IEntityTypeConfiguration<Person>
     public void Configure(EntityTypeBuilder<Person> builder)
     {
         builder.HasKey(p => p.Id);
+        builder.Property(p => p.Id).ValueGeneratedOnAdd(); 
         builder.Property(p => p.Name).IsRequired();
         builder.Property(p => p.BirthDateTime).IsRequired();
         builder.Property(p => p.Sex).IsRequired();
