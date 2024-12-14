@@ -1,4 +1,4 @@
-using FamilyTreeBlazor.presentation.Entities;
+using FamilyTreeBlazor.presentation.Models;
 using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
 using FamilyTreeBlazor.presentation.Controllers.Interfaces;
 using FamilyTreeBlazor.presentation.Services.Interfaces;
@@ -30,7 +30,7 @@ public class PersonController : IPersonController
     public void CreateRelation(int targetId)
     {
         Relation relType = _appState.GetSpecificState<EditToolState>().RelationState;
-        Entities.RelationshipType relationshipType;
+        Models.RelationshipType relationshipType;
         relationshipType = RelationTranslator.ToEntitiesRelationshipType(relType);
 
         Relationship rel = new(_appState.GetSpecificState<EditToolState>().EditId, targetId, relationshipType, true);
@@ -52,7 +52,7 @@ public class PersonController : IPersonController
         else
         {
             Relation relType = _appState.GetSpecificState<EditToolState>().RelationState;
-            Entities.RelationshipType relationshipType;
+            Models.RelationshipType relationshipType;
 
             relationshipType = RelationTranslator.ToEntitiesRelationshipType(relType);
 

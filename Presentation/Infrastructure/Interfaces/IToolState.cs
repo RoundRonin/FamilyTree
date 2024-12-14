@@ -1,4 +1,4 @@
-﻿using FamilyTreeBlazor.presentation.Entities;
+﻿using FamilyTreeBlazor.presentation.Models;
 using Microsoft.AspNetCore.Components;
 
 namespace FamilyTreeBlazor.presentation.Infrastructure.Interfaces;

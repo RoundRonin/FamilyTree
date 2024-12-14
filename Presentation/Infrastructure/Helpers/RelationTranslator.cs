@@ -14,13 +14,13 @@ public static class RelationTranslator
             _ => throw new NotImplementedException(),
         };
     }
-    public static Entities.RelationshipType ToEntitiesRelationshipType(Relation relation)
+    public static Models.RelationshipType ToEntitiesRelationshipType(Relation relation)
     {
         return relation switch
         {
-            Relation.Parent => Entities.RelationshipType.Parent,
-            Relation.Child => Entities.RelationshipType.Parent,
-            Relation.Spouse => Entities.RelationshipType.Spouse,
+            Relation.Parent => Models.RelationshipType.Parent,
+            Relation.Child => Models.RelationshipType.Parent,
+            Relation.Spouse => Models.RelationshipType.Spouse,
             _ => throw new NotImplementedException(),
         };
     }

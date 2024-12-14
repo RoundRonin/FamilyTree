@@ -1,8 +1,8 @@
 using FamilyTreeBlazor.BLL.DTOs;
 using FamilyTreeBlazor.BLL.Infrastructure;
-using FamilyTreeBlazor.presentation.Entities;
+using FamilyTreeBlazor.presentation.Models;
 using FamilyTreeBlazor.presentation.Services.Interfaces;
-using RelationshipType = FamilyTreeBlazor.presentation.Entities.RelationshipType;
+using RelationshipType = FamilyTreeBlazor.presentation.Models.RelationshipType;
 
 namespace FamilyTreeBlazor.presentation.Services;
 
@@ -39,6 +39,8 @@ class PresentationService() : IPresentationService
         _familyTreeService = familyTreeService;
         _personService = personService;
         CachedTree = treeCache;
+
+        InitializeTree();
     }
 
     public void UpdateTree()

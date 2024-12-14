@@ -1,7 +1,6 @@
 ﻿using FamilyTreeBlazor.presentation.Components.Card;
 using FamilyTreeBlazor.presentation.Components.DynamicPanel;
-using FamilyTreeBlazor.presentation.Controllers.Interfaces;
-using FamilyTreeBlazor.presentation.Entities;
+using FamilyTreeBlazor.presentation.Models;
 using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
 using FamilyTreeBlazor.presentation.Services.Interfaces;
 using Microsoft.AspNetCore.Components;

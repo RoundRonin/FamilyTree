@@ -1,6 +1,6 @@
 using FamilyTreeBlazor.BLL.DTOs;
 using FamilyTreeBlazor.BLL.Infrastructure;
-using FamilyTreeBlazor.presentation.Entities;
+using FamilyTreeBlazor.presentation.Models;
 using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
 using FamilyTreeBlazor.presentation.Services.Interfaces;
 

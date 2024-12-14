@@ -1,4 +1,4 @@
-using FamilyTreeBlazor.presentation.Entities;
+using FamilyTreeBlazor.presentation.Models;
 using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
 
 namespace FamilyTreeBlazor.presentation.Services.Interfaces;

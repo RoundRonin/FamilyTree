@@ -73,6 +73,8 @@ class D3GraphManager {
             treeDepth: 0,
             componentName: this.placeholderName
         };
+
+        this.TickFinished = false;
     }
 
     // Public Methods
@@ -189,7 +191,7 @@ class D3GraphManager {
             .on("tick", () => this._ticked());
     }
 
-    _updateGraphData(newNodes, newLinks) {
+    async _updateGraphData(newNodes, newLinks) {
         if (!this.simulation) {
             this.logger.log("Simulation is not initialized. Make sure renderD3Graph is called first.");
             return;
@@ -270,7 +272,10 @@ class D3GraphManager {
                     }
                 });
 
+                this.logger.log("Hello");
                 this._updateSimulation();
+                this.logger.log("There");
+                this._insertBlazorComponents();
                 break;
             default:
                 this.logger.error("No such scenario");
@@ -281,6 +286,29 @@ class D3GraphManager {
         this.logger.log("Current Links after update:", this.currentLinks);
     }
 
+    _waitForTick() {
+        return new Promise(resolve => {
+            const checkTickFinished = () => {
+                if (this.TickFinished) {
+                    this.logger.log("Tick Finished");
+                    resolve();
+                } else {
+                    this.logger.log("Tick executing");
+                    setTimeout(checkTickFinished, 50);
+                }
+            };
+            checkTickFinished();
+        });
+    }
+
+    _waitABit(time) {
+        return new Promise(resolve => {
+            setTimeout(() => {
+                resolve();
+            }, time); 
+        });
+    }
+
     _updateSimulation() {
         this.simulation.nodes(this.currentNodes);
         this.simulation.force("link").links(this.currentLinks);
@@ -288,6 +316,9 @@ class D3GraphManager {
     }
 
     _ticked() {
+        //this.logger.log("Ticking...");
+        this.TickFinished = false;
+
         const link = this.linkGroup.selectAll('line') // Use linkGroup for links
             .data(this.currentLinks)
             .join('line')
@@ -318,6 +349,9 @@ class D3GraphManager {
             .attr('y1', d => d.source.y)
             .attr('x2', d => d.target.x)
             .attr('y2', d => d.target.y);
+
+        this.TickFinished = true;
+        //this.logger.log("Ticked");
     }
 
     _dragstarted(event, d) {
@@ -345,11 +379,20 @@ class D3GraphManager {
             .catch(err => this.logger.error("Error invoking BlazorClickHandler:", err));
     }
 
-    _insertBlazorComponents() {
+    async _insertBlazorComponents() {
         this.logger.log(this.currentNodes);
+        await this._waitABit(10);
+        await this._waitForTick();
 
-        this.currentNodes.forEach(node => {
+        this.currentNodes.forEach(async node => {
             let container = document.getElementById(`${node.componentName}-container-${node.id}`);
+
+            if (!container) {
+                this.logger.log(`No container with id ${node.componentName}-container-${node.id}`);
+                await this._waitABit(50);
+            } 
+
+            container = document.getElementById(`${node.componentName}-container-${node.id}`);
             if (!container) {
                 this.logger.log(`No container with id ${node.componentName}-container-${node.id}`);
             } else if (container && !container.childElementCount) {

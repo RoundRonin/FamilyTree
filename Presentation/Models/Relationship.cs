@@ -1,4 +1,4 @@
-﻿namespace FamilyTreeBlazor.presentation.Entities;
+﻿namespace FamilyTreeBlazor.presentation.Models;
 
 public enum RelationshipType
 {

@@ -3,6 +3,7 @@ using FamilyTreeBlazor.presentation.Services.Interfaces;
 using FamilyTreeBlazor.presentation.Controllers.Interfaces;
 using Microsoft.JSInterop;
 using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
+using FamilyTreeBlazor.presentation.Models;
 
 namespace FamilyTreeBlazor.presentation.Controllers;
 
@@ -57,7 +58,7 @@ public class TreeController : IDisposable, ITreeController
     {
         var (nodesHtml, links) = GetTreeData();
 
-        await _jsRuntime.InvokeVoidAsync("renderD3Graph", (object)nodesHtml, (object)links, 180);
+        await _jsRuntime.InvokeVoidAsync("renderD3Graph", nodesHtml, links, 180);
         await _jsRuntime.InvokeVoidAsync("insertComponents", "person-card");
     }
 
@@ -65,26 +66,26 @@ public class TreeController : IDisposable, ITreeController
     {
         var (nodesHtml, links) = GetTreeData();
 
-        await _jsRuntime.InvokeVoidAsync("updateGraph", (object)nodesHtml, (object)links);
-        await _jsRuntime.InvokeVoidAsync("insertComponents", "person-card");
+        await _jsRuntime.InvokeVoidAsync("updateGraph", nodesHtml, links);
+        //await _jsRuntime.InvokeVoidAsync("insertComponents", "person-card");
     }
 
-    private (dynamic nodesHtml, dynamic links) GetTreeData()
+    private (List<PersonNode> nodesHtml, List<RelationLink> links) GetTreeData()
     {
         var nodesHtml = PresentationService.PersonList.Select(node => new
-        {
-            node.Id,
-            node.Name,
-            node.TreeDepth,
+        PersonNode{
+            Id = node.Id,
+            Name = node.Name,
+            TreeDepth = node.TreeDepth,
             Person = node,
             HtmlId = $"person-card-container-{node.Id}"
         }).ToList();
 
         var links = PresentationService.RelationshipList.Select(link => new
-        {
+        RelationLink {
             Source = link.PersonId1,
             Target = link.PersonId2,
-            link.RelationshipType
+            RelationshipType = link.RelationshipType
         }).ToList();
 
         return (nodesHtml, links);

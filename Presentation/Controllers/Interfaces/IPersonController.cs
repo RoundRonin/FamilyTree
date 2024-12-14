@@ -1,4 +1,4 @@
-using FamilyTreeBlazor.presentation.Entities;
+using FamilyTreeBlazor.presentation.Models;
 
 namespace FamilyTreeBlazor.presentation.Controllers.Interfaces;
 
