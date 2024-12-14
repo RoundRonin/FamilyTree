@@ -85,3 +85,8 @@ h1:focus {
     outline-offset: -0.5rem; /* Negative value to move the border inward */
 }
 
+.common-ancestor-border {
+    border: none; /* Remove the default border */
+    outline: 0.5rem solid pink; /* Adjust the color and width as needed */
+    outline-offset: -0.5rem; /* Negative value to move the border inward */
+}

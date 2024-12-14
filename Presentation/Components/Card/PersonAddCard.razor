@@ -8,8 +8,11 @@
 <div class="person-card">
     <MudCard>
         <MudCardContent Class="flex-column">
-            <h6>@Person.Name</h6>
-            <MudButton Variant="Variant.Filled" FullWidth="true" style="color: black" Color="Color.Tertiary" OnClick="() => CreateRelation()">Add relation</MudButton>
+            <div style="display: flex; flex-direction: row; justify-content: space-between">
+                <h6>@Person.Name</h6>
+                <p style="color: @(Person.Sex ? "aqua" : "pink" )">@(Person.Sex ? "M" : "F")</p>
+            </div>
+            <MudButton Disabled="@DisableButton" Variant="Variant.Filled" FullWidth="true" style="color: black" Color="Color.Tertiary" OnClick="() => CreateRelation()">Add relation</MudButton>
         </MudCardContent>
     </MudCard>
 </div>
@@ -20,7 +23,7 @@
     [Parameter]
     public required Person Person { get; set; }
     [Parameter]
-    public DisabledRelations UnavailableRelations { get; set; }
+    public bool DisableButton { get; set; }
 
     private void CreateRelation()
     {
@@ -30,6 +33,8 @@
 
         Relationship rel = new(AppState.GetSpecificState<EditToolState>().EditId, Person.Id, relationshipType, true);
 
-        TreeService.AddRelationship(rel);
+        TreeService.AddRelationship(rel, relType);
+
+        AppState.GetSpecificState<EditToolState>().State = EditState.Initial;
     }
 }

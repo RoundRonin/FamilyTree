@@ -1,10 +1,14 @@
 ﻿@using System
+@using FamilyTreeBlazor.presentation.Entities
 @inject IAppStateService AppState
 
 <div class="person-card">
-    <MudCard Class="@(State == CardState.HighlightedChosen ? "inward-border" : "")">
+    <MudCard Class="@GetCardClass(State)">
         <MudCardContent>
-            <h6>@Name</h6>
+            <div style="display: flex; flex-direction: row; justify-content: space-between">
+                <h6>@Person.Name</h6>
+                <p style="color: @(Person.Sex ? "aqua" : "pink" )">@(Person.Sex ? "M" : "F")</p>
+            </div>
             <p>@BirthDay.Year (@AgeHelper.GetAgeFromBirthDay(BirthDay))</p>
         </MudCardContent>
     </MudCard>
@@ -14,7 +18,7 @@
     [Parameter]
     public CardState State { get; set; } = CardState.Default;
     [Parameter]
-    public string Name { get; set; } = "Default";
+    public required Person Person { get; set; }
     [Parameter]
     public DateTime BirthDay { get; set; } = DateTime.MinValue;
 
@@ -26,5 +30,16 @@
     public void Dispose()
     {
         AppState.OnChange -= StateHasChanged; // Unsubscribe from state changes
+    }
+
+    private string GetCardClass(CardState state)
+    {
+        return state switch
+        {
+            CardState.HighlightedChosen => "inward-border",
+            CardState.HighlightedCommonAncestor => "common-ancestor-border",
+            CardState.Choose => "choose-border",
+            _ => ""
+        };
     }
 }

@@ -15,7 +15,9 @@ public class EditToolState(IStateNotifier stateNotifier, ITreeService treeServic
     private int _editId;
 
     private Dictionary<int, bool> _relations = [];
+    private Dictionary<int, CardState> _ancestors = [];
 
+    private Person editPerson;
     private EditState _state = EditState.Initial;
     private Relation _relationState = Relation.Parent;
 
@@ -47,34 +49,38 @@ public class EditToolState(IStateNotifier stateNotifier, ITreeService treeServic
     public override void HandleId(int Id)
     {
         _editId = Id;
-        //PersonListDTO _parents = treeService.GetParents(Id);
-        //PersonListDTO _kids = treeService.GetKids(Id);
-        //Person? _spouse = treeService.GetSpouse(Id);
+        editPerson = treeService.GetPerson(Id);
+        IEnumerable<Person> _parents = treeService.GetParents(Id);
+        IEnumerable<Person> _kids = treeService.GetChildren(Id);
+        Person? _spouse = treeService.GetSpouse(Id);
 
-        //_relations.Clear();
+        _relations.Clear();
+        _ancestors.Clear();
 
-        //var parentsDictionary = _parents.Persons
-        //    .Where(p => p.Id.HasValue) // Filter out null Ids
-        //    .ToDictionary(p => p.Id.Value, p => true);
+        var ancestors = treeService.GetPersonAncestors(Id);
+        _ancestors = ancestors;
+        foreach (var ancestor in _ancestors) Console.WriteLine(ancestor);
 
-        //var kidsDictionary = _kids.Persons
-        //    .Where(p => p.Id.HasValue) // Filter out null Ids
-        //    .ToDictionary(p => p.Id.Value, p => true);
+        var parentsDictionary = _parents
+            .ToDictionary(p => p.Id, p => true);
 
-        //foreach (var kvp in parentsDictionary)
-        //{
-        //    _relations[kvp.Key] = kvp.Value; 
-        //}
+        var kidsDictionary = _kids
+            .ToDictionary(p => p.Id, p => true);
 
-        //foreach (var kvp in kidsDictionary)
-        //{
-        //    _relations[kvp.Key] = kvp.Value;
-        //}
+        foreach (var kvp in parentsDictionary)
+        {
+            _relations[kvp.Key] = kvp.Value;
+        }
 
-        //if (_spouse != null)
-        //{
-        //    _relations[_spouse.Id] = true; 
-        //}
+        foreach (var kvp in kidsDictionary)
+        {
+            _relations[kvp.Key] = kvp.Value;
+        }
+
+        if (_spouse != null)
+        {
+            _relations[_spouse.Id] = true;
+        }
 
         NotifyStateChanged();
     }
@@ -123,53 +129,69 @@ public class EditToolState(IStateNotifier stateNotifier, ITreeService treeServic
 
         // Define which buttons are usable
         DisabledRelations disabledRelations = new();
-        disabledRelations.Enable(); // TEMP
 
 
-        //PersonListDTO parents = treeService.GetParents(person.Id);
-        //PersonListDTO kids = treeService.GetKids(person.Id);
-        //Person? spouse = treeService.GetSpouse(person.Id);
+        IEnumerable<Person> parents = treeService.GetParents(person.Id);
+        IEnumerable<Person> kids = treeService.GetChildren(person.Id);
+        Person? spouse = treeService.GetSpouse(person.Id);
 
-        //if (parents.Persons.Count < 2) disabledRelations.Parent = true;
-        //if (spouse != null) disabledRelations.Spouse = true;
-        //// Child check is not needed. We can have a million kids
+        if (parents.Count() < 2) disabledRelations.Parent = false;
+        if (spouse == null) disabledRelations.Spouse = false;
+        disabledRelations.Child = false;
+        // Child check is not needed. We can have a million kids
 
         switch (_state)
         {
             case EditState.Initial:
                 builder.OpenComponent(0, typeof(PersonEditCard));
-                builder.AddAttribute(1, "Name", person.Name);
+                builder.AddAttribute(1, "Person", person);
                 builder.AddAttribute(2, "State", CardState.Default);
                 builder.AddAttribute(3, "DisabledButtons", disabledRelations);
                 break;
             case EditState.ChoosePerson:
                 if (person.Id != _editId)
                 {
+                    bool disableAddition = false;
                     // Check if a person is already a relative
                     if (_relations.TryGetValue(person.Id, out var relation))
                     {
-                        disabledRelations.Disable();
+                        disableAddition = true;
                     }
 
-                    // Todo check if a person is an ancestor of any kind for the _editId
+                    // We support traditional values on this one
+                    if (_relationState == Relation.Spouse 
+                        && person.Sex == editPerson.Sex) 
+                        disableAddition = true;
+
+                    // Check if a person is an ancestor
+                    if (_ancestors.TryGetValue(person.Id, out var ancestors))
+                    {
+                        disableAddition = true;
+                    }
+
+                    // For kids -- check if a person is older
+                    if (_relationState == Relation.Child && person.BirthDateTime < editPerson.BirthDateTime)
+                    {
+                        disableAddition = true;
+                    }
 
 
                     builder.OpenComponent(0, typeof(PersonAddCard));
                     builder.AddAttribute(1, "Person", person);
                     builder.AddAttribute(2, "State", state);
-                    builder.AddAttribute(3, "UnavailableRelations", disabledRelations);
+                    builder.AddAttribute(3, "DisableButton", disableAddition);
                 } 
                 else
                 {
                     builder.OpenComponent(0, typeof(PersonEditCard));
-                    builder.AddAttribute(1, "Name", person.Name);
+                    builder.AddAttribute(1, "Person", person);
                     builder.AddAttribute(2, "State", state);
                     builder.AddAttribute(3, "DisabledButtons", disabledRelations);
                 }
                 break;
             case EditState.CreatePerson:
                 builder.OpenComponent(0, typeof(PersonEditCard));
-                builder.AddAttribute(1, "Name", person.Name);
+                builder.AddAttribute(1, "Person", person);
                 builder.AddAttribute(2, "State", state);
                 builder.AddAttribute(3, "DisabledButtons", disabledRelations);
                 break;

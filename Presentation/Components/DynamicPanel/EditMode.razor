@@ -6,29 +6,33 @@
 
 <h3>Edit mode: @Text</h3>
 
-<MudTextField @bind-Value=@name Label="Enter name" Variant="Variant.Text"></MudTextField>
+<MudForm @ref="form" @bind-IsValid="@success">
+    <MudTextField @bind-Value=@name Label="Enter name" Variant="Variant.Text" Required="true" RequiredError="Name is required!" ></MudTextField>
 
-<MudDatePicker 
-    Label="Enter birthday" 
-    Editable="true" @bind-Date=@dateTime
-    Mask="@(new DateMask("MM/dd/yyyy"))" 
-    DateFormat="MM/dd/yyyy" 
-    Placeholder="en-US Date" 
+    <MudDatePicker 
+        Label="Enter birthday" 
+        Editable="true" @bind-Date=@dateTime
+        Mask="@(new DateMask("MM/dd/yyyy"))" 
+        DateFormat="MM/dd/yyyy" 
+        Placeholder="en-US Date" 
 
-    MaxDate=@DateTime.Today
-    MinDate=@(new DateTime(1900, 1, 1))
+        MaxDate=@DateTime.Today
+        MinDate=@(new DateTime(1900, 1, 1))
 
-/>
- 
-<div class="radio"> 
-    <MudRadioGroup @bind-Value=@sex>
-        <MudRadio Value="true" Color="Color.Primary" Dense="true">Male</MudRadio>
-        <MudRadio Value="false" Color="Color.Secondary" Dense="false">Female</MudRadio>
-    </MudRadioGroup>
-</div>
+        Required="true" RequiredError="Birth date is required!" 
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => AddPerson()">Add person</MudButton>
-<MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="() => Cancel()">Cancel</MudButton>
+    />
+     
+    <div class="radio"> 
+        <MudRadioGroup @bind-Value=@sex Required="true" RequiredError="Sex is required!" >
+            <MudRadio Value="true" Color="Color.Primary" Dense="true">Male</MudRadio>
+            <MudRadio Value="false" Color="Color.Secondary" Dense="false">Female</MudRadio>
+        </MudRadioGroup>
+    </div>
+
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => AddPerson()">Add person</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="() => Cancel()">Cancel</MudButton>
+</MudForm>
 
 
 @code {
@@ -39,9 +43,13 @@
     DateTime? dateTime = null;
     bool sex = true;
 
+    MudForm form;
+    bool success;
 
     public void AddPerson()
     {
+        form.Validate();
+        if (!success) return;
         if (name != null && dateTime != null)
         {
             Relation relType = AppState.GetSpecificState<EditToolState>().RelationState;
@@ -58,6 +66,6 @@
 
     public void Cancel()
     {
-        AppState.GetSpecificState<EditToolState>().State = EditState.ChoosePerson;
+        AppState.GetSpecificState<EditToolState>().State = EditState.Initial;
     }
 }

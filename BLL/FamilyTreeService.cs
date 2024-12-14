@@ -95,7 +95,12 @@ public class FamilyTreeService(IPersonService personService, IRelationshipServic
             throw new Exception("Person not found");
         }
 
-        if (!IsDescendant(ancestor, descendant))
+        //if (!IsDescendant(ancestor, descendant))
+        //{
+        //    throw new InvalidOperationException("The specified person is not a descendant of the ancestor.");
+        //}
+
+        if (GetAllAncestors(descendant).Contains(_personService.GetPersonById(ancestorId)))
         {
             throw new InvalidOperationException("The specified person is not a descendant of the ancestor.");
         }
@@ -116,6 +121,15 @@ public class FamilyTreeService(IPersonService personService, IRelationshipServic
         var ancestors2 = GetAllAncestors(person2);
 
         return ancestors1.Intersect(ancestors2);
+    }
+    public IEnumerable<PersonDTO> GetPersonAncestors(int personId)
+    {
+        if (!_treeCache.Persons.TryGetValue(personId, out var person))
+        {
+            throw new Exception("Person not found");
+        }
+
+        return GetAllAncestors(person);
     }
 
     public async Task ResetTreeAsync()

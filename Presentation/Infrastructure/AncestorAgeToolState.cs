@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace FamilyTreeBlazor.presentation.Infrastructure;
 
-public class AncestorAgeToolState(IStateNotifier stateNotifier) : ToolStateBase(stateNotifier), IAncestorAgeToolState
+public class AncestorAgeToolState(IStateNotifier stateNotifier, ITreeService treeService) : ToolStateBase(stateNotifier), IAncestorAgeToolState
 {
     private readonly Queue<int> _ancestorAgeCandidatesIds = new();
     public Queue<int> AncestorAgeCandidatesIds => _ancestorAgeCandidatesIds;
@@ -25,11 +25,25 @@ public class AncestorAgeToolState(IStateNotifier stateNotifier) : ToolStateBase(
 
     public void AddCandidateId(int id)
     {
-        // Maintain a queue of two elements
-        if (_ancestorAgeCandidatesIds.Count == 2)
+        switch (_ancestorAgeCandidatesIds.Count)
         {
-            _ancestorAgeCandidatesIds.Dequeue();
+            case 0:
+                _state = AncestorAgeState.ChooseSecond;
+                break;
+            case 1:
+                if (id == _ancestorAgeCandidatesIds.ElementAt(0)) return;
+                _state = AncestorAgeState.View;
+                break;
+            case 2:
+                if (id == _ancestorAgeCandidatesIds.ElementAt(0)
+                    || id == _ancestorAgeCandidatesIds.ElementAt(1)) return;
+                _ancestorAgeCandidatesIds.Dequeue();
+                break;
+
+            default:
+                break;
         }
+
         _ancestorAgeCandidatesIds.Enqueue(id);
         NotifyStateChanged();
     }
@@ -57,6 +71,8 @@ public class AncestorAgeToolState(IStateNotifier stateNotifier) : ToolStateBase(
                 break;
             case AncestorAgeState.View:
                 builder.OpenComponent(0, typeof(AncestorAge));
+                builder.AddAttribute(1, "Person", treeService.GetPerson(AncestorAgeCandidatesIds.ElementAt(0)));
+                builder.AddAttribute(2, "Ancestor", treeService.GetPerson(AncestorAgeCandidatesIds.ElementAt(1)));
                 builder.CloseComponent();
                 break;
             default:
@@ -72,9 +88,8 @@ public class AncestorAgeToolState(IStateNotifier stateNotifier) : ToolStateBase(
         else if (size >= 2 && person.Id == _ancestorAgeCandidatesIds.ElementAt(1)) state = CardState.HighlightedChosen;
 
         builder.OpenComponent(0, typeof(PersonViewCard));
-        builder.AddAttribute(1, "Name", person.Name);
-        builder.AddAttribute(2, "BirthDay", person.BirthDateTime);
-        builder.AddAttribute(3, "State", state);
+        builder.AddAttribute(1, "Person", person);
+        builder.AddAttribute(2, "State", state);
         builder.CloseComponent();
     };
 

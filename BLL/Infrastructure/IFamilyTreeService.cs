@@ -12,4 +12,5 @@ public interface IFamilyTreeService
     int CalculateAncestorAgeAtBirth(int ancestorId, int descendantId);
     Task ResetTreeAsync();
     IEnumerable<PersonDTO> FindCommonAncestors(int personId1, int personId2);
+    IEnumerable<PersonDTO> GetPersonAncestors(int personId);
 }

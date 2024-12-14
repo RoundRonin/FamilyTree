@@ -22,26 +22,9 @@
 
     [Parameter]
     // TODO use BLL
-    public PersonListDTO ListKids { get; set; } = new PersonListDTO
-    {
-        Persons = new List<PersonDTO>
-        {
-            new("Test Testov", new(1999, 10, 5), true, 1),
-            new("Valdemar Testov", new(1999, 10, 5), true, 1),
-            new("Test Irin", new(1999, 10, 5), true, 1),
-        }
-    };
-
+    public IEnumerable<Person> ListKids { get; set; } = [];
     [Parameter]
-    public PersonListDTO ListParents { get; set; } = new PersonListDTO
-    {
-        Persons = new List<PersonDTO>
-        {
-            new("Okazii Testov", new(1999, 10, 5), true, 1),
-            new("Test Dir", new(1999, 10, 5), true, 1),
-            new("Test Man", new(1999, 10, 5), true, 1),
-        }
-    };
+    public IEnumerable<Person> ListParents { get; set; } = [];
 
     protected override void OnInitialized()
     {

@@ -22,14 +22,5 @@
     public Person? PersonB { get; set; }
 
     [Parameter]
-    // TODO use BLL
-    public PersonListDTO Ancestors { get; set; } = new PersonListDTO
-    {
-        Persons = new List<PersonDTO>
-        {
-            new("Test Testov", new(1999, 10, 5), true, 1),
-            new("Valdemar Testov", new(1999, 10, 5), true, 1),
-            new("Test Irin", new(1999, 10, 5), true, 1),
-        }
-    };
+    public IEnumerable<Person> Ancestors { get; set; } = [];
 }

@@ -10,7 +10,7 @@ namespace FamilyTreeBlazor.presentation.Infrastructure;
 public class CommonAncestorsToolState(IStateNotifier stateNotifier, ITreeService treeService) : ToolStateBase(stateNotifier), ICommonAncestorsToolState
 {
     private readonly Queue<int> _commonAncestorsCheckCandidatesIds = new();
-    private Dictionary<int, CardState>? _commonAncestorsStates;
+    private Dictionary<int, CardState>? _commonAncestorsStates = new();
     public Queue<int> CommonAncestorsCheckCandidatesIds => _commonAncestorsCheckCandidatesIds;
 
     
@@ -27,12 +27,26 @@ public class CommonAncestorsToolState(IStateNotifier stateNotifier, ITreeService
 
     public void AddCandidateId(int id)
     {
-        // Maintain a queue of two elements
         bool enough = false;
-        if (_commonAncestorsCheckCandidatesIds.Count == 2)
+        switch (_commonAncestorsCheckCandidatesIds.Count)
         {
-            _commonAncestorsCheckCandidatesIds.Dequeue(); 
-            enough = true;
+            case 0:
+                _state = CommonAncestorsState.ChooseSecond;
+                break;
+            case 1:
+                if (id == _commonAncestorsCheckCandidatesIds.ElementAt(0)) return;
+                _state = CommonAncestorsState.View;
+                enough = true;
+                break;
+            case 2:
+                if (id == _commonAncestorsCheckCandidatesIds.ElementAt(0)
+                    || id == _commonAncestorsCheckCandidatesIds.ElementAt(1)) return;
+                _commonAncestorsCheckCandidatesIds.Dequeue();
+                enough = true;
+                break;
+
+            default:
+                break;
         }
 
         _commonAncestorsCheckCandidatesIds.Enqueue(id);
@@ -42,7 +56,10 @@ public class CommonAncestorsToolState(IStateNotifier stateNotifier, ITreeService
             int id1 = _commonAncestorsCheckCandidatesIds.ElementAt(0);
             int id2 = _commonAncestorsCheckCandidatesIds.ElementAt(1);
 
-            //_commonAncestorsStates = treeService.GetCommonAncestors(id1, id2);
+            _commonAncestorsStates = treeService.GetCommonAncestors(id1, id2);
+
+            Console.WriteLine("Hello, we are checking for ancestors");
+            foreach (var (idx, state) in _commonAncestorsStates) Console.WriteLine(idx + " " + state);
         }
 
         NotifyStateChanged();
@@ -70,6 +87,9 @@ public class CommonAncestorsToolState(IStateNotifier stateNotifier, ITreeService
                 break;
             case CommonAncestorsState.View:
                 builder.OpenComponent(0, typeof(CommonAncestors));
+                builder.AddAttribute(1, "PersonA", treeService.GetPerson(_commonAncestorsCheckCandidatesIds.ElementAt(0)));
+                builder.AddAttribute(2, "PersonB", treeService.GetPerson(_commonAncestorsCheckCandidatesIds.ElementAt(1)));
+                builder.AddAttribute(3, "Ancestors", _commonAncestorsStates.Keys.Select(id => treeService.GetPerson(id)));
                 builder.CloseComponent();
                 break;
             default:
@@ -91,9 +111,8 @@ public class CommonAncestorsToolState(IStateNotifier stateNotifier, ITreeService
         }
 
         builder.OpenComponent(0, typeof(PersonViewCard));
-        builder.AddAttribute(1, "Name", person.Name);
-        builder.AddAttribute(2, "BirthDay", person.BirthDateTime);
-        builder.AddAttribute(3, "State", state);
+        builder.AddAttribute(1, "Person", person);
+        builder.AddAttribute(2, "State", state);
         builder.CloseComponent();
     };
 

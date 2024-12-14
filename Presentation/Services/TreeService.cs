@@ -73,15 +73,6 @@ class TreeService() : ITreeService
         NotifyOnChanged();
     }
 
-    public Person FindPerson(int Id)
-    {
-        if (_personDict.TryGetValue(Id, out Person? person))
-        {
-            return person;
-        }
-        throw new Exception("Such a person doesn't exist");
-    }
-
     public IEnumerable<Person> GetChildren(int Id)
     {
         return _familyTreeService.GetChildren(Id)
@@ -104,12 +95,33 @@ class TreeService() : ITreeService
         return _personDict.TryGetValue(spouse.Id.Value, out var person) ? person : null;
     }
 
+    public int? GetAncestorAge(int ancestor, int descendant)
+    {
+        int age;
+        try
+        {
+            age = _familyTreeService.CalculateAncestorAgeAtBirth(ancestor, descendant);
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            return null;
+        }
+        return age;
+    }
+    
     public Dictionary<int, CardState> GetCommonAncestors(int Id1, int Id2)
     {
-        throw new NotImplementedException();
+        return _familyTreeService.FindCommonAncestors(Id1, Id2).ToDictionary(
+            p => p.Id.Value, p => CardState.HighlightedCommonAncestor);
+    }
+    public Dictionary<int, CardState> GetPersonAncestors(int Id)
+    {
+        return _familyTreeService.GetPersonAncestors(Id).ToDictionary(
+            p => p.Id.Value, p => CardState.HighlightedCommonAncestor);
     }
 
-    public async void AddPersonRelationship(Person person, Relationship rel, Relation type)
+    public async void AddPersonRelationship(Person person, Relationship rel, Relation newRelation)
     {
         // check
         if (!ValidateRelationshipPerson(person, rel)) throw new Exception("Relationship is broken");
@@ -128,15 +140,15 @@ class TreeService() : ITreeService
         int depth = oldPerson.TreeDepth;
 
         rel.PersonId2 = person.Id;
-        switch (type)
+        switch (newRelation)
         {
             case Relation.Child:
                 depth++;
-                await _relationshipService.AddParentChildRelationshipAsync(rel.PersonId2, rel.PersonId1);
+                await _relationshipService.AddParentChildRelationshipAsync(rel.PersonId1, rel.PersonId2);
                 break;
             case Relation.Parent:
                 depth--;
-                await _relationshipService.AddParentChildRelationshipAsync(rel.PersonId1, rel.PersonId2);
+                await _relationshipService.AddParentChildRelationshipAsync(rel.PersonId2, rel.PersonId1);
                 break;
             case Relation.Spouse:
                 await _relationshipService.AddSpouseRelationshipAsync(rel.PersonId1, rel.PersonId2);
@@ -152,15 +164,18 @@ class TreeService() : ITreeService
         NotifyOnChanged();
     }
 
-    public async void AddRelationship(Relationship rel)
+    public async void AddRelationship(Relationship rel, Relation newRelation)
     {
         // BLL LOGIC
-        switch (rel.RelationshipType)
+        switch (newRelation)
         {
-            case RelationshipType.Parent:
+            case Relation.Child:
                 await _relationshipService.AddParentChildRelationshipAsync(rel.PersonId1, rel.PersonId2);
                 break;
-            case RelationshipType.Spouse:
+            case Relation.Parent:
+                await _relationshipService.AddParentChildRelationshipAsync(rel.PersonId2, rel.PersonId1);
+                break;
+            case Relation.Spouse:
                 await _relationshipService.AddSpouseRelationshipAsync(rel.PersonId1, rel.PersonId2);
                 break;
             default:
@@ -209,7 +224,7 @@ class TreeService() : ITreeService
             foreach (var child in personDTO.Children)
             {
                 if (child == null || visited.Contains(child.Id.Value)) continue;
-                q.Enqueue(new(child, ++depth));
+                q.Enqueue(new(child, depth + 1));
                 Relationship rel = new(personDTO.Id.Value, child.Id.Value, RelationshipType.Parent, true);
                 _relationshipList.Add(rel);
             }
@@ -217,7 +232,7 @@ class TreeService() : ITreeService
             foreach (var parent in personDTO.Parents)
             {
                 if (parent == null || visited.Contains(parent.Id.Value)) continue;
-                q.Enqueue(new(parent, --depth));
+                q.Enqueue(new(parent, depth - 1));
                 Relationship rel = new(parent.Id.Value, personDTO.Id.Value, RelationshipType.Parent, true);
                 _relationshipList.Add(rel);
             }
