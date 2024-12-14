@@ -1,0 +1,18 @@
+﻿@using FamilyTreeBlazor.BLL.DTOs
+@code {
+    [Parameter] public required string Label { get; set; }
+    [Parameter] public string? Value { get; set; }
+}
+
+<div class="line">
+    <p class="label">@Label</p>
+    @if (Value != null)
+    {
+        <p class="value">@Value</p>
+    }
+    else
+    {
+        <p class="value">Value not found</p>
+    }
+</div>
+

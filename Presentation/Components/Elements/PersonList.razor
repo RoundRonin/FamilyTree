@@ -1,0 +1,27 @@
+﻿@using FamilyTreeBlazor.BLL.DTOs
+
+@code {
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public PersonListDTO? List { get; set; }
+}
+
+<div class="line">
+    <p class="label">@Label</p>
+    @if (List?.Persons != null)
+    {
+        <div class="list">
+            @for(var idx = 0; idx < List.Persons.Count - 1; idx++)
+            {
+                <p class="value">@List.Persons.ElementAt(idx).Name,</p>
+            }
+            <p class="value">@List.Persons.Last().Name</p>
+            @foreach (var person in List.Persons)
+            {
+            }
+        </div>
+    }
+    else
+    {
+        <p class="value">No persons available.</p>
+    }
+</div>

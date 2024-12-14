@@ -27,17 +27,19 @@ main {
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
 }
 
     .top-row .name {
-        padding: 1rem;
-        margin-right: auto;
+        margin-left: 2rem;
+        margin-top: auto;
+        margin-bottom: auto;
 
         font-size: larger;
     }
 
     .top-row .link {
-        padding: 1rem;
+        padding: 4rem;
     }
 
 /*.top-row {

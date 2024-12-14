@@ -1,0 +1,21 @@
+﻿body {
+}
+
+.line {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    justify-items: flex-end;
+}
+
+.label {
+    font: 300;
+    color: var(--secondary-text-color);
+    margin: 0;
+}
+
+.value {
+    font: bold;
+    margin: 0;
+}

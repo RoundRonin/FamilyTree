@@ -1,5 +1,39 @@
-﻿<h3>ViewMode</h3>
+﻿@using FamilyTreeBlazor.presentation.Components.Elements
+@using FamilyTreeBlazor.BLL.DTOs
+@using FamilyTreeBlazor.presentation.Services
+@inject AppState AppState
+
+<h3>View mode</h3>
+
+<h5>Peronal info</h5>
+<PersonInfo Person=person/>
+<hr />
+<h5>Relations info</h5>
+<LabelValuePair Label="spouse" Value=spouseName/>
+<PersonList Label="kids" List=listKids/>
+<PersonList Label="parents" List=listParents/>
 
 @code {
+    PersonDTO person = new("Test Testov", new(1999, 10, 5), true, 1);
+    string spouseName = "Ekaterina Olegovna";
 
+    PersonListDTO listKids = new PersonListDTO
+    {
+        Persons = new List<PersonDTO>
+        {
+            new("Test Testov", new(1999, 10, 5), true, 1),
+            new("Valdemar Testov", new(1999, 10, 5), true, 1),
+            new("Test Irin", new(1999, 10, 5), true, 1),
+        }
+    };
+
+    PersonListDTO listParents = new PersonListDTO
+    {
+        Persons = new List<PersonDTO>
+        {
+            new("Okazii Testov", new(1999, 10, 5), true, 1),
+            new("Test Dir", new(1999, 10, 5), true, 1),
+            new("Test Man", new(1999, 10, 5), true, 1),
+        }
+    };
 }

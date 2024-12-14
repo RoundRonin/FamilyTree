@@ -2,7 +2,7 @@
 @using FamilyTreeBlazor.presentation.Services
 @inject AppState AppState
 
-<div>
+<div class="panel">
     @if (AppState.SelectedTool == Tool.View)
     {
         <ViewMode />
@@ -18,10 +18,6 @@
     else if (AppState.SelectedTool == Tool.CommonAncestors)
     {
         <CommonAncestors />
-    }
-    else if (AppState.SelectedTool == Tool.DeleteTree)
-    {
-        <DeleteTree />
     }
 </div>
 

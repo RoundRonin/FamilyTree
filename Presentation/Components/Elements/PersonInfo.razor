@@ -1,0 +1,16 @@
+﻿@using FamilyTreeBlazor.BLL.DTOs
+
+@if (Person != null) {
+    <LabelValuePair Label="name" Value=@Person.Name/>
+    <LabelValuePair Label="birthday" Value=@Person.BirthDateTime.ToShortDateString()/>
+    <LabelValuePair Label="sex" Value=@(Person.Sex ? "male" : "female")/>
+} else
+{
+    <LabelValuePair Label="name" Value=@null/>
+    <LabelValuePair Label="birthday" Value=@null/>
+    <LabelValuePair Label="sex" Value=@null/>
+}
+
+@code {
+    [Parameter] public PersonDTO? Person { get; set; }
+}

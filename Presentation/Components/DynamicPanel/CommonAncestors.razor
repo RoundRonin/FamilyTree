@@ -1,5 +1,30 @@
-﻿<h3>CommonAncestors</h3>
+﻿@using FamilyTreeBlazor.presentation.Components.Elements
+@using FamilyTreeBlazor.BLL.DTOs
+
+<h3>Common ancestors</h3>
+
+<h5>Person A</h5>
+<PersonInfo Person=personA />
+
+<br />
+<h5>Person B</h5>
+<PersonInfo Person=personB />
+
+<hr />
+<h5>Common ancestors</h5>
+<PersonList Label="result" List=commonAncestors />
 
 @code {
+    PersonDTO personA = new("Test Testov", new(1999, 10, 5), true, 1);
+    PersonDTO personB = new("Man Manov", new(1999, 10, 5), true, 1);
 
+    PersonListDTO? commonAncestors = new PersonListDTO
+    {
+        Persons = new List<PersonDTO>
+        {
+            new("Test Testov", new(1999, 10, 5), true, 1),
+            new("Valdemar Testov", new(1999, 10, 5), true, 1),
+            new("Test Irin", new(1999, 10, 5), true, 1),
+        }
+    };
 }

@@ -9,8 +9,7 @@ public enum Tool
     View,
     Edit,
     AncestorAge,
-    CommonAncestors,
-    DeleteTree
+    CommonAncestors
 }
 
 public class AppState

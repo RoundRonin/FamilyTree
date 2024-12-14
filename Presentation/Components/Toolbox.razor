@@ -2,14 +2,12 @@
 @using FamilyTreeBlazor.presentation.Services
 @using System.Diagnostics
 @inject AppState AppState
-
+@* @inject DataService DataService 
+ *@
 <div class="toolbox-container">
     <div class="main-block">
-        <MudTooltip Text="View" Arrow="true" Placement="Placement.Right">
+        <MudTooltip Text="View info" Arrow="true" Placement="Placement.Right">
             <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.RemoveRedEye" @onclick="() => SelectTool(Tool.View)"/>
-        </MudTooltip>
-        <MudTooltip Text="Edit" Arrow="true" Placement="Placement.Right">
-            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Edit" @onclick="() => SelectTool(Tool.Edit)"/>
         </MudTooltip>
         <MudTooltip Text="Ancestor Age" Arrow="true" Placement="Placement.Right">
             <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowUpward" @onclick="() => SelectTool(Tool.AncestorAge)"/>
@@ -17,10 +15,13 @@
         <MudTooltip Text="Common Ancestors" Arrow="true" Placement="Placement.Right">
             <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonSearch" @onclick="() => SelectTool(Tool.CommonAncestors)"/>
         </MudTooltip>
+        <MudTooltip Text="Edit tree" Arrow="true" Placement="Placement.Right">
+            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Edit" @onclick="() => SelectTool(Tool.Edit)"/>
+        </MudTooltip>
     </div>
     <div class="delete">
         <MudTooltip Text="Delete Tree" Arrow="true" Placement="Placement.Right">
-            <MudFab Color="Color.Error" StartIcon="@Icons.Material.Filled.DeleteForever" @onclick="() => SelectTool(Tool.DeleteTree)"/>
+            <MudFab Color="Color.Dark" StartIcon="@Icons.Material.Filled.DeleteForever" @onclick="() => DeleteTree()"/>
         </MudTooltip>
     </div>
 </div>
@@ -46,5 +47,10 @@
         AppState.SelectedTool = tool;
         AppState.NotifyStateChanged(); // Notify subscribers about the state change
         Tool = tool;
+    }
+
+    private void DeleteTree()
+    {
+        throw new NotImplementedException("Delete not implemented");
     }
 }
