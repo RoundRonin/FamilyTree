@@ -1,8 +1,9 @@
 ﻿@using FamilyTreeBlazor.presentation.Components.Elements
 @using FamilyTreeBlazor.presentation.Entities
 @using FamilyTreeBlazor.BLL.DTOs
+@using FamilyTreeBlazor.presentation.Controllers.Interfaces
 @inject IAppStateService AppState
-@inject ITreeService TreeService
+@inject IPersonController PersonController
 
 <h3>Ancestor age</h3>
 
@@ -36,7 +37,7 @@ else
     private void GetAncestorAge()
     {
         // TEMP fix
-        CalculatedAge = TreeService.GetAncestorAge(Person.Id, Ancestor.Id);
+        CalculatedAge = PersonController.GetAncestorAge(Person.Id, Ancestor.Id);
         if (CalculatedAge != null) CalculatedAge = (int)Math.Abs((decimal)CalculatedAge);
     }
 

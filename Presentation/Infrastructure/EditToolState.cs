@@ -1,16 +1,14 @@
-﻿using FamilyTreeBlazor.BLL.DTOs;
-using FamilyTreeBlazor.presentation.Components.Card;
+﻿using FamilyTreeBlazor.presentation.Components.Card;
 using FamilyTreeBlazor.presentation.Components.DynamicPanel;
+using FamilyTreeBlazor.presentation.Controllers.Interfaces;
 using FamilyTreeBlazor.presentation.Entities;
 using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
 using FamilyTreeBlazor.presentation.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace FamilyTreeBlazor.presentation.Infrastructure;
 
-public class EditToolState(IStateNotifier stateNotifier, ITreeService treeService) : ToolStateBase(stateNotifier), IEditToolState
+public class EditToolState(IStateNotifier stateNotifier, IAncestorService ancestorService, IPersonRelationshipService personRelationshipService, IRelationshipInfoService relationshipInfoService) : ToolStateBase(stateNotifier), IEditToolState
 {
     private int _editId;
 
@@ -22,21 +20,23 @@ public class EditToolState(IStateNotifier stateNotifier, ITreeService treeServic
     private Relation _relationState = Relation.Parent;
 
     public int EditId { get => _editId; }
-    public EditState State { 
-        get => _state; 
+    public EditState State
+    {
+        get => _state;
         set
         {
             _state = value;
             NotifyStateChanged();
-        } 
+        }
     }
-    public Relation RelationState { 
-        get => _relationState; 
+    public Relation RelationState
+    {
+        get => _relationState;
         set
         {
             _relationState = value;
             NotifyStateChanged();
-        } 
+        }
     }
 
     public void SetState(EditState state, Relation relation)
@@ -49,15 +49,15 @@ public class EditToolState(IStateNotifier stateNotifier, ITreeService treeServic
     public override void HandleId(int Id)
     {
         _editId = Id;
-        editPerson = treeService.GetPerson(Id);
-        IEnumerable<Person> _parents = treeService.GetParents(Id);
-        IEnumerable<Person> _kids = treeService.GetChildren(Id);
-        Person? _spouse = treeService.GetSpouse(Id);
+        editPerson = personRelationshipService.GetPerson(Id);
+        IEnumerable<Person> _parents = relationshipInfoService.GetParents(Id);
+        IEnumerable<Person> _kids = relationshipInfoService.GetChildren(Id);
+        Person? _spouse = relationshipInfoService.GetSpouse(Id);
 
         _relations.Clear();
         _ancestors.Clear();
 
-        var ancestors = treeService.GetPersonAncestors(Id);
+        var ancestors = ancestorService.GetPersonAncestors(Id);
         _ancestors = ancestors;
         foreach (var ancestor in _ancestors) Console.WriteLine(ancestor);
 
@@ -138,9 +138,9 @@ public class EditToolState(IStateNotifier stateNotifier, ITreeService treeServic
         DisabledRelations disabledRelations = new();
 
 
-        IEnumerable<Person> parents = treeService.GetParents(person.Id);
-        IEnumerable<Person> kids = treeService.GetChildren(person.Id);
-        Person? spouse = treeService.GetSpouse(person.Id);
+        IEnumerable<Person> parents = relationshipInfoService.GetParents(person.Id);
+        IEnumerable<Person> kids = relationshipInfoService.GetChildren(person.Id);
+        Person? spouse = relationshipInfoService.GetSpouse(person.Id);
 
         if (parents.Count() < 2) disabledRelations.Parent = false;
         if (spouse == null) disabledRelations.Spouse = false;
@@ -166,8 +166,8 @@ public class EditToolState(IStateNotifier stateNotifier, ITreeService treeServic
                     }
 
                     // We support traditional values on this one
-                    if (_relationState == Relation.Spouse 
-                        && person.Sex == editPerson.Sex) 
+                    if (_relationState == Relation.Spouse
+                        && person.Sex == editPerson.Sex)
                         disableAddition = true;
 
                     // Check if a person is an ancestor
@@ -187,7 +187,7 @@ public class EditToolState(IStateNotifier stateNotifier, ITreeService treeServic
                     builder.AddAttribute(1, "Person", person);
                     builder.AddAttribute(2, "State", state);
                     builder.AddAttribute(3, "DisableButton", disableAddition);
-                } 
+                }
                 else
                 {
                     builder.OpenComponent(0, typeof(PersonEditCard));

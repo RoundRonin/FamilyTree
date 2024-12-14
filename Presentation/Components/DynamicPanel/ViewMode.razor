@@ -1,17 +1,18 @@
 ﻿@using FamilyTreeBlazor.BLL.DTOs
+@using FamilyTreeBlazor.presentation.Controllers.Interfaces
 @using FamilyTreeBlazor.presentation.Entities
 @inject IAppStateService AppState
-@inject ITreeService TreeState 
+@inject IPersonController PersonController
 
 <h3>View mode</h3>
 
 <h5>Peronal info</h5>
-<PersonInfo Person=@TreeState.GetPerson(PersonId) />
+<PersonInfo Person=@PersonController.GetPerson(PersonId) />
 <hr />
 <h5>Relations info</h5>
-<LabelValuePair Label="spouse" Value=@(Spouse != null ? Spouse.Name : "None")/>
-<PersonList Label="kids" List=ListKids/>
-<PersonList Label="parents" List=ListParents/>
+<LabelValuePair Label="spouse" Value=@(Spouse != null ? Spouse.Name : "None") />
+<PersonList Label="kids" List=ListKids />
+<PersonList Label="parents" List=ListParents />
 
 @code {
     [Parameter]
@@ -21,7 +22,6 @@
     public Person? Spouse { get; set; }
 
     [Parameter]
-    // TODO use BLL
     public IEnumerable<Person> ListKids { get; set; } = [];
     [Parameter]
     public IEnumerable<Person> ListParents { get; set; } = [];

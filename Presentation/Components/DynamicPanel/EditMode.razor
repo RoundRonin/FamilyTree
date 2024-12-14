@@ -1,30 +1,22 @@
 ﻿@using FamilyTreeBlazor.BLL.DTOs
 @using FamilyTreeBlazor.presentation.Entities
 @using FamilyTreeBlazor.presentation.Infrastructure
+@using FamilyTreeBlazor.presentation.Controllers.Interfaces;
 @inject IAppStateService AppState
-@inject ITreeService TreeService 
+@inject IPersonController PersonController
 
 <h3>Edit mode: @Text</h3>
 
 <MudForm @ref="form" @bind-IsValid="@success">
-    <MudTextField @bind-Value=@name Label="Enter name" Variant="Variant.Text" Required="true" RequiredError="Name is required!" ></MudTextField>
+    <MudTextField @bind-Value=@name Label="Enter name" Variant="Variant.Text" Required="true"
+        RequiredError="Name is required!"></MudTextField>
 
-    <MudDatePicker 
-        Label="Enter birthday" 
-        Editable="true" @bind-Date=@dateTime
-        Mask="@(new DateMask("MM/dd/yyyy"))" 
-        DateFormat="MM/dd/yyyy" 
-        Placeholder="en-US Date" 
+    <MudDatePicker Label="Enter birthday" Editable="true" @bind-Date=@dateTime Mask="@(new DateMask("MM/dd/yyyy"))"
+        DateFormat="MM/dd/yyyy" Placeholder="en-US Date" MaxDate=@DateTime.Today MinDate=@(new DateTime(1900, 1, 1))
+        Required="true" RequiredError="Birth date is required!" />
 
-        MaxDate=@DateTime.Today
-        MinDate=@(new DateTime(1900, 1, 1))
-
-        Required="true" RequiredError="Birth date is required!" 
-
-    />
-     
-    <div class="radio"> 
-        <MudRadioGroup @bind-Value=@sex Required="true" RequiredError="Sex is required!" >
+    <div class="radio">
+        <MudRadioGroup @bind-Value=@sex Required="true" RequiredError="Sex is required!">
             <MudRadio Value="true" Color="Color.Primary" Dense="true">Male</MudRadio>
             <MudRadio Value="false" Color="Color.Secondary" Dense="false">Female</MudRadio>
         </MudRadioGroup>
@@ -50,24 +42,17 @@
     {
         form.Validate();
         if (!success) return;
-        if (AppState.GetSpecificState<EditToolState>().State == EditState.CreateInitialPerson) {
-            Person person = new(0, name, dateTime.Value, sex);
-            TreeService.AddInitialPerson(person);
-            AppState.GetSpecificState<EditToolState>().State = EditState.Initial;
-            AppState.ChangeToolState<ViewToolState>();
-        }
-        else
+        if (dateTime == null)
         {
-            Relation relType = AppState.GetSpecificState<EditToolState>().RelationState;
-            Entities.RelationshipType relationshipType;
-
-            relationshipType = RelationTranslator.ToEntitiesRelationshipType(relType);
-
-            Person person = new(0, name, dateTime.Value, sex);
-            Relationship rel = new(AppState.GetSpecificState<EditToolState>().EditId, person.Id, relationshipType, true);
-
-            TreeService.AddPersonRelationship(person, rel, relType);
+            Console.WriteLine("DateTime in EditMode panel is null");
+            return;
         }
+        if (name == null)
+        {
+            Console.WriteLine("DateTime in EditMode panel is null");
+            return;
+        }
+        PersonController.AddPerson(name, dateTime.Value, sex);
     }
 
     public void Cancel()

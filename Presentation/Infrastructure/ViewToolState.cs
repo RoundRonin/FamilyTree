@@ -1,6 +1,6 @@
-﻿using FamilyTreeBlazor.BLL.DTOs;
-using FamilyTreeBlazor.presentation.Components.Card;
+﻿using FamilyTreeBlazor.presentation.Components.Card;
 using FamilyTreeBlazor.presentation.Components.DynamicPanel;
+using FamilyTreeBlazor.presentation.Controllers.Interfaces;
 using FamilyTreeBlazor.presentation.Entities;
 using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
 using FamilyTreeBlazor.presentation.Services.Interfaces;
@@ -8,29 +8,30 @@ using Microsoft.AspNetCore.Components;
 
 namespace FamilyTreeBlazor.presentation.Infrastructure;
 
-public class ViewToolState(IStateNotifier stateNotifier, ITreeService treeService) : ToolStateBase(stateNotifier), IViewToolState
+public class ViewToolState(IStateNotifier stateNotifier, IRelationshipInfoService relationshipInfoService) : ToolStateBase(stateNotifier), IViewToolState
 {
     private int? _viewId;
-    private IEnumerable<Person>? _kids; 
-    private IEnumerable<Person>?  _parents; 
-    private Person? _spouse; 
+    private IEnumerable<Person>? _kids;
+    private IEnumerable<Person>? _parents;
+    private Person? _spouse;
 
     public ViewState _state = ViewState.Initial;
-    public ViewState State { 
-        get => _state; 
+    public ViewState State
+    {
+        get => _state;
         set
         {
             _state = value;
             NotifyStateChanged();
-        } 
+        }
     }
 
     public override void HandleId(int Id)
     {
         _viewId = Id;
-        _kids = treeService.GetChildren(Id);
-        _parents = treeService.GetParents(Id);
-        _spouse = treeService.GetSpouse(Id);
+        _kids = relationshipInfoService.GetChildren(Id);
+        _parents = relationshipInfoService.GetParents(Id);
+        _spouse = relationshipInfoService.GetSpouse(Id);
 
         _state = ViewState.View;
 

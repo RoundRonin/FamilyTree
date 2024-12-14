@@ -2,7 +2,7 @@
 @using FamilyTreeBlazor.presentation.Infrastructure
 @using System.Diagnostics
 @inject IAppStateService AppState
-@inject ITreeService TreeService
+@inject IPresentationService PresentationService 
 
 <div class="toolbox-container">
     <div class="main-block">
@@ -33,17 +33,12 @@
 @code {
     protected override void OnInitialized()
     {
-        AppState.OnChange += StateHasChangedSafely; // Subscribe to state changes
+        AppState.OnChange += StateHasChanged;
     }
 
     public void Dispose()
     {
-        AppState.OnChange -= StateHasChangedSafely; // Unsubscribe from state changes
-    }
-
-    private async void StateHasChangedSafely() 
-    { 
-        await InvokeAsync(StateHasChanged); 
+        AppState.OnChange -= StateHasChanged;
     }
 
     private void SelectTool<T>() where T : IToolState
@@ -59,6 +54,6 @@
 
     private void DeleteTree()
     {
-        TreeService.DeleteTree();
+        PresentationService.DeleteTree();
     }
 }

@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Components.Web;
 using FamilyTreeBlazor.presentation.Services.Interfaces;
 using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
 using FamilyTreeBlazor.presentation.Infrastructure;
+using FamilyTreeBlazor.presentation.Controllers.Interfaces;
+using FamilyTreeBlazor.presentation.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,14 +40,20 @@ builder.Services.AddScoped<IFamilyTreeService, FamilyTreeService>();
 builder.Services.AddScoped<IRepository<Person>, Repository<Person>>();
 builder.Services.AddScoped<IRepository<Relationship>, Repository<Relationship>>();
 
-builder.Services.AddScoped<IStateNotifier, StateNotifier>(); 
+builder.Services.AddScoped<IStateNotifier, StateNotifier>();
 builder.Services.AddScoped<IViewToolState, ViewToolState>();
 builder.Services.AddScoped<IEditToolState, EditToolState>();
 builder.Services.AddScoped<IAncestorAgeToolState, AncestorAgeToolState>();
 builder.Services.AddScoped<ICommonAncestorsToolState, CommonAncestorsToolState>();
 
 builder.Services.AddScoped<IAppStateService, AppStateService>();
-builder.Services.AddScoped<ITreeService, TreeService>();
+builder.Services.AddScoped<IPresentationService, PresentationService>();
+builder.Services.AddScoped<IAncestorService, AncestorService>();
+builder.Services.AddScoped<IPersonRelationshipService, PersonRelationshipService>();
+builder.Services.AddScoped<IRelationshipInfoService, RelationshipInfoService>();
+
+builder.Services.AddScoped<ITreeController, TreeController>();
+builder.Services.AddScoped<IPersonController, PersonController>();
 
 builder.Services.AddSingleton<ITreeCache, TreeCacheDTO>();
 

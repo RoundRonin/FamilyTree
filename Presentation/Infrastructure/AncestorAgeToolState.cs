@@ -1,5 +1,6 @@
 ﻿using FamilyTreeBlazor.presentation.Components.Card;
 using FamilyTreeBlazor.presentation.Components.DynamicPanel;
+using FamilyTreeBlazor.presentation.Controllers.Interfaces;
 using FamilyTreeBlazor.presentation.Entities;
 using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
 using FamilyTreeBlazor.presentation.Services.Interfaces;
@@ -7,14 +8,15 @@ using Microsoft.AspNetCore.Components;
 
 namespace FamilyTreeBlazor.presentation.Infrastructure;
 
-public class AncestorAgeToolState(IStateNotifier stateNotifier, ITreeService treeService) : ToolStateBase(stateNotifier), IAncestorAgeToolState
+public class AncestorAgeToolState(IStateNotifier stateNotifier, IPersonRelationshipService personRelationshipService) : ToolStateBase(stateNotifier), IAncestorAgeToolState
 {
     private readonly Queue<int> _ancestorAgeCandidatesIds = new();
     public Queue<int> AncestorAgeCandidatesIds => _ancestorAgeCandidatesIds;
 
 
     public AncestorAgeState _state = AncestorAgeState.ChooseFirst;
-    public AncestorAgeState State {
+    public AncestorAgeState State
+    {
         get => _state;
         set
         {
@@ -71,8 +73,8 @@ public class AncestorAgeToolState(IStateNotifier stateNotifier, ITreeService tre
                 break;
             case AncestorAgeState.View:
                 builder.OpenComponent(0, typeof(AncestorAge));
-                builder.AddAttribute(1, "Person", treeService.GetPerson(AncestorAgeCandidatesIds.ElementAt(0)));
-                builder.AddAttribute(2, "Ancestor", treeService.GetPerson(AncestorAgeCandidatesIds.ElementAt(1)));
+                builder.AddAttribute(1, "Person", personRelationshipService.GetPerson(AncestorAgeCandidatesIds.ElementAt(0)));
+                builder.AddAttribute(2, "Ancestor", personRelationshipService.GetPerson(AncestorAgeCandidatesIds.ElementAt(1)));
                 builder.CloseComponent();
                 break;
             default:
