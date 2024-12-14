@@ -1,0 +1,22 @@
+@using FamilyTreeBlazor.presentation.Entities
+@using FamilyTreeBlazor.presentation.Infrastructure
+@using MudBlazor
+@using System
+@inject IAppStateService AppState
+@inject ITreeService TreeService 
+
+<div class="person-card">
+    <MudCard>
+        <MudCardContent Class="flex-column">
+            <MudButton Variant="Variant.Filled" FullWidth="true" style="color: black" Color="Color.Tertiary" OnClick="() => CreateInitialPerson()">Add relation</MudButton>
+        </MudCardContent>
+    </MudCard>
+</div>
+
+@code {
+    private void CreateInitialPerson()
+    {
+        AppState.ChangeToolState<EditToolState>();
+        AppState.GetSpecificState<EditToolState>().State = EditState.CreateInitialPerson;
+    }
+}

@@ -27,6 +27,7 @@ public interface ITreeService
     public Dictionary<int, CardState> GetPersonAncestors(int Id);
 
     // Adding new items
+    public void AddInitialPerson(Person person);
     public void AddPersonRelationship(Person person, Relationship rel, Relation type);
     public void AddRelationship(Relationship rel, Relation newRelation);
 }

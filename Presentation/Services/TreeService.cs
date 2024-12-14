@@ -121,6 +121,19 @@ class TreeService() : ITreeService
             p => p.Id.Value, p => CardState.HighlightedCommonAncestor);
     }
 
+    public async void AddInitialPerson(Person person) {
+        // BLL LOGIC
+        PersonDTO personDTO = new(person.Name, person.BirthDateTime.ToUniversalTime(), person.Sex);
+        int id = await _personService.AddPersonAsync(personDTO);
+        person.Id = id;
+
+        // TreeService logic
+        person.TreeDepth = 0;
+        _personDict[person.Id] = person;
+
+        NotifyOnChanged();
+    }
+
     public async void AddPersonRelationship(Person person, Relationship rel, Relation newRelation)
     {
         // check
@@ -206,6 +219,7 @@ class TreeService() : ITreeService
 
         if (CachedTree.Persons.Count == 0)
         {
+            return;
             await _personService.AddPersonAsync(new("Default", DateTime.Now, true));
         }
         var personPair = CachedTree.Persons.First();

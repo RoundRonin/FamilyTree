@@ -53,6 +53,7 @@ builder.Services.AddSingleton<ITreeCache, TreeCacheDTO>();
 builder.Services.AddServerSideBlazor(options =>
 {
     options.RootComponents.RegisterForJavaScript<PersonCard>(identifier: "person-card");
+    options.RootComponents.RegisterForJavaScript<InitCard>(identifier: "init-card");
 });
 
 builder.Services.AddRazorComponents()

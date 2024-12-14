@@ -4,7 +4,8 @@ public enum EditState
 {
     Initial,
     ChoosePerson,
-    CreatePerson
+    CreatePerson,
+    CreateInitialPerson
 }
 
 public enum Relation

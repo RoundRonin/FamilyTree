@@ -8,6 +8,8 @@
 <div id="tree-container"></div>
 
 @code {
+    string componentName = "person-card";
+
     [JSInvokable]
     public void BlazorClickHandler(string personId)
     {
@@ -62,8 +64,8 @@
             link.RelationshipType
         }).ToList();
 
-        var componentName = "person-card";
-        await JS.InvokeVoidAsync("renderD3Graph", nodesHtml, links, componentName, 180);
+        await JS.InvokeVoidAsync("renderD3Graph", nodesHtml, links, 180);
+        await JS.InvokeVoidAsync("insertComponents", componentName);
     }
 
     // Method to update graph with new nodes and links
@@ -85,6 +87,7 @@
         }).ToList();
 
         await JS.InvokeVoidAsync("updateGraph", nodesHtml, links);
+        await JS.InvokeVoidAsync("insertComponents", componentName);
     }
 
     public void Dispose()

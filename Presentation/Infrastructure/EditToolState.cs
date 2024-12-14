@@ -114,6 +114,11 @@ public class EditToolState(IStateNotifier stateNotifier, ITreeService treeServic
                 builder.AddAttribute(1, "Text", text);
                 builder.CloseComponent();
                 break;
+            case EditState.CreateInitialPerson:
+                builder.OpenComponent(0, typeof(EditMode));
+                builder.AddAttribute(1, "Text", "first person");
+                builder.CloseComponent();
+                break;
             default:
                 throw new NotImplementedException();
         }
@@ -121,6 +126,8 @@ public class EditToolState(IStateNotifier stateNotifier, ITreeService treeServic
 
     public override RenderFragment RenderCard(Person person) => builder =>
     {
+        if (_state == EditState.CreateInitialPerson) return;
+
         CardState state = CardState.Default;
         if (person.Id == _editId)
         {

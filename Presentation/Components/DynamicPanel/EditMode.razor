@@ -50,7 +50,13 @@
     {
         form.Validate();
         if (!success) return;
-        if (name != null && dateTime != null)
+        if (AppState.GetSpecificState<EditToolState>().State == EditState.CreateInitialPerson) {
+            Person person = new(0, name, dateTime.Value, sex);
+            TreeService.AddInitialPerson(person);
+            AppState.GetSpecificState<EditToolState>().State = EditState.Initial;
+            AppState.ChangeToolState<ViewToolState>();
+        }
+        else
         {
             Relation relType = AppState.GetSpecificState<EditToolState>().RelationState;
             Entities.RelationshipType relationshipType;

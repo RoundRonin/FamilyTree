@@ -35,7 +35,9 @@ else
 
     private void GetAncestorAge()
     {
-        CalculatedAge = TreeService.GetAncestorAge(Ancestor.Id, Person.Id);
+        // TEMP fix
+        CalculatedAge = TreeService.GetAncestorAge(Person.Id, Ancestor.Id);
+        if (CalculatedAge != null) CalculatedAge = (int)Math.Abs((decimal)CalculatedAge);
     }
 
     protected override void OnInitialized()
