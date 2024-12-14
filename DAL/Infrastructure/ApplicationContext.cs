@@ -3,8 +3,7 @@ using FamilyTreeBlazor.DAL.Entities;
 using FamilyTreeBlazor.DAL.Configurations;
 
 namespace FamilyTreeBlazor.DAL.Infrastructure;
-
-public class FamilyTreeContext : DbContext
+public class ApplicationContext(DbContextOptions<ApplicationContext> options) : DbContext(options)
 {
     public DbSet<Person> Persons { get; set; }
     public DbSet<Relationship> Relationships { get; set; }

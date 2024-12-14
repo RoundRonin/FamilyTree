@@ -8,9 +8,4 @@ public class Person(int Id, string Name, DateTime BirthDateTime, bool Sex) : IEn
     public string Name { get; set; } = Name;
     public DateTime BirthDateTime { get; set; } = BirthDateTime;
     public bool Sex { get; set; } = Sex;
-
-    // Navigation properties
-    public ICollection<Relationship> ParentRelationships { get; set; } = [];
-    public ICollection<Relationship> ChildRelationships { get; set; } = [];
-    public Relationship? SpouseRelationship { get; set; }
 }
