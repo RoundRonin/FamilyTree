@@ -1,6 +1,6 @@
 ﻿@rendermode InteractiveServer
 @using FamilyTreeBlazor.presentation.Services
-@inject AppState AppState
+@inject IAppStateService AppState
 
 <div class="panel">
     @if (AppState.SelectedTool == Tool.View)

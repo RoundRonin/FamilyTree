@@ -1,15 +1,16 @@
 using FamilyTreeBlazor.BLL;
+using FamilyTreeBlazor.BLL.DTOs;
 using FamilyTreeBlazor.BLL.Infrastructure;
 using FamilyTreeBlazor.DAL;
 using FamilyTreeBlazor.DAL.Entities;
 using FamilyTreeBlazor.DAL.Infrastructure;
-using FamilyTreeBlazor.presentation.Services;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 
+using FamilyTreeBlazor.presentation.Services;
+using FamilyTreeBlazor.presentation.Infrastructure;
 using FamilyTreeBlazor.presentation.Components;
 using FamilyTreeBlazor.presentation.Components.Card;
-using FamilyTreeBlazor.BLL.DTOs;
 using Microsoft.AspNetCore.Components.Web;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,9 +32,10 @@ builder.Services.AddScoped<IRelationshipService, RelationshipService>();
 builder.Services.AddScoped<IFamilyTreeService, FamilyTreeService>();
 builder.Services.AddScoped<IRepository<Person>, Repository<Person>>();
 builder.Services.AddScoped<IRepository<Relationship>, Repository<Relationship>>();
-builder.Services.AddScoped<AppState>();
+builder.Services.AddScoped<IAppStateService, AppStateService>();
+builder.Services.AddScoped<ITreeService, TreeService>();
 
-builder.Services.AddSingleton<TreeCacheDTO>();
+builder.Services.AddSingleton<ITreeCache, TreeCacheDTO>();
 
 // Register the component for JavaScript
 builder.Services.AddServerSideBlazor(options =>

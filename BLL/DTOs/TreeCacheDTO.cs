@@ -1,6 +1,8 @@
-﻿namespace FamilyTreeBlazor.BLL.DTOs;
+﻿using FamilyTreeBlazor.BLL.Infrastructure;
 
-public class TreeCacheDTO
+namespace FamilyTreeBlazor.BLL.DTOs;
+
+public class TreeCacheDTO : ITreeCache
 {
     public Dictionary<int, PersonDTO> Persons { get; set; } = [];
 }
