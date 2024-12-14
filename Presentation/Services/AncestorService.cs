@@ -1,11 +1,12 @@
 using FamilyTreeBlazor.BLL.Infrastructure;
 using FamilyTreeBlazor.presentation.Services.Interfaces;
+using FamilyTreeBlazor.presentation.State.Interfaces;
 
 namespace FamilyTreeBlazor.presentation.Services;
 
 public class AncestorService : IAncestorService
 {
-    private IFamilyTreeService _familyTreeService;
+    private readonly IFamilyTreeService _familyTreeService;
 
     public IPresentationService PresentationService { get; private set; }
 

@@ -1,8 +1,9 @@
 ﻿@using FamilyTreeBlazor.presentation.Models
 @using FamilyTreeBlazor.presentation.Infrastructure
+@using FamilyTreeBlazor.presentation.Services.Commands
 @using MudBlazor
 @using System
-@inject IAppStateService AppState
+@inject IAppStateContext AppStateContext
 
 <div class="person-card">
     <MudCard Class="@(State == CardState.HighlightedChosen ? "inward-border" : "")">
@@ -37,19 +38,16 @@
 
     private void AddChild()
     {
-        AppState.GetSpecificState<EditToolState>().SetState(EditState.ChoosePerson, Relation.Child);
-        Console.WriteLine("Add Child clicked for " + Person.Name);
+        AppStateContext.CurrentToolState.Fire(new SetRelationTypeCommand(Relation.Child));
     }
 
     private void AddSpouse()
     {
-        AppState.GetSpecificState<EditToolState>().SetState(EditState.ChoosePerson, Relation.Spouse);
-        Console.WriteLine("Add Spouse clicked for " + Person.Name);
+        AppStateContext.CurrentToolState.Fire(new SetRelationTypeCommand(Relation.Spouse));
     }
 
     private void AddParent()
     {
-        AppState.GetSpecificState<EditToolState>().SetState(EditState.ChoosePerson, Relation.Parent);
-        Console.WriteLine("Add Parent clicked for " + Person.Name);
+        AppStateContext.CurrentToolState.Fire(new SetRelationTypeCommand(Relation.Parent));
     }
 }

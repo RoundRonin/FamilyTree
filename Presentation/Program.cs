@@ -12,10 +12,18 @@ using FamilyTreeBlazor.presentation.Components;
 using FamilyTreeBlazor.presentation.Components.Card;
 using Microsoft.AspNetCore.Components.Web;
 using FamilyTreeBlazor.presentation.Services.Interfaces;
-using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
-using FamilyTreeBlazor.presentation.Infrastructure;
 using FamilyTreeBlazor.presentation.Controllers.Interfaces;
 using FamilyTreeBlazor.presentation.Controllers;
+using FamilyTreeBlazor.presentation.State.EditState;
+using FamilyTreeBlazor.presentation.State.Interfaces;
+using FamilyTreeBlazor.presentation.State;
+using FamilyTreeBlazor.presentation.State.ViewState.Interfaces;
+using FamilyTreeBlazor.presentation.State.ViewState;
+using FamilyTreeBlazor.presentation.State.EditState.Interfaces;
+using FamilyTreeBlazor.presentation.State.AncestorAgeState.Interfaces;
+using FamilyTreeBlazor.presentation.State.AncestorAgeState;
+using FamilyTreeBlazor.presentation.State.CommonAncestorsState.Interfaces;
+using FamilyTreeBlazor.presentation.State.CommonAncestorsState;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,13 +48,13 @@ builder.Services.AddScoped<IFamilyTreeService, FamilyTreeService>();
 builder.Services.AddScoped<IRepository<Person>, Repository<Person>>();
 builder.Services.AddScoped<IRepository<Relationship>, Repository<Relationship>>();
 
+builder.Services.AddScoped<IAppStateContext, AppStateContext>();
 builder.Services.AddScoped<IStateNotifier, StateNotifier>();
 builder.Services.AddScoped<IViewToolState, ViewToolState>();
 builder.Services.AddScoped<IEditToolState, EditToolState>();
 builder.Services.AddScoped<IAncestorAgeToolState, AncestorAgeToolState>();
 builder.Services.AddScoped<ICommonAncestorsToolState, CommonAncestorsToolState>();
 
-builder.Services.AddScoped<IAppStateService, AppStateService>();
 builder.Services.AddScoped<IPresentationService, PresentationService>();
 builder.Services.AddScoped<IAncestorService, AncestorService>();
 builder.Services.AddScoped<IPersonRelationshipService, PersonRelationshipService>();

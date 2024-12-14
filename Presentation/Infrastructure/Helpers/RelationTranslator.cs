@@ -1,4 +1,4 @@
-﻿using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
+﻿using FamilyTreeBlazor.presentation.State.EditState.Interfaces;
 
 namespace FamilyTreeBlazor.presentation.Infrastructure.Helpers;
 

@@ -1,8 +1,8 @@
 using FamilyTreeBlazor.BLL.DTOs;
 using FamilyTreeBlazor.BLL.Infrastructure;
 using FamilyTreeBlazor.presentation.Models;
-using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
 using FamilyTreeBlazor.presentation.Services.Interfaces;
+using FamilyTreeBlazor.presentation.State.EditState.Interfaces;
 
 namespace FamilyTreeBlazor.presentation.Services;
 

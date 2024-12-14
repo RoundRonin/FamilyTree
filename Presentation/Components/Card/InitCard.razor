@@ -1,9 +1,10 @@
 @using FamilyTreeBlazor.presentation.Models
 @using FamilyTreeBlazor.presentation.Infrastructure
 @using FamilyTreeBlazor.presentation.Services.Interfaces
+@using FamilyTreeBlazor.presentation.Services.Commands
 @using MudBlazor
 @using System
-@inject IAppStateService AppState
+@inject IAppStateContext AppStateContext 
 
 <div class="person-card">
     <MudCard>
@@ -17,7 +18,8 @@
 @code {
     private void CreateInitialPerson()
     {
-        AppState.ChangeToolState<EditToolState>();
-        AppState.GetSpecificState<EditToolState>().State = EditState.CreateInitialPerson;
+        // TODO work with the overall context internally too
+        AppStateContext.RequestChangeToolState(ToolState.EditTool);
+        AppStateContext.CurrentToolState.Fire(new CreateInitialPersonCommand());
     }
 }

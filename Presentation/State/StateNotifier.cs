@@ -1,6 +1,6 @@
-﻿using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
+using FamilyTreeBlazor.presentation.State.Interfaces;
 
-namespace FamilyTreeBlazor.presentation.Infrastructure;
+namespace FamilyTreeBlazor.presentation.State;
 
 public class StateNotifier : IStateNotifier
 {

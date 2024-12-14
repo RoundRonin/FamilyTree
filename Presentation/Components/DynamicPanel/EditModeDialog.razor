@@ -1,7 +1,8 @@
 ﻿@using FamilyTreeBlazor.BLL.DTOs
 @using FamilyTreeBlazor.presentation.Models
 @using FamilyTreeBlazor.presentation.Infrastructure
-@inject IAppStateService AppState
+@using FamilyTreeBlazor.presentation.Services.Commands
+@inject IAppStateContext AppStateContext
 
 <h3>Edit mode: @Text</h3>
 
@@ -18,11 +19,11 @@
 
     public void CreatePerson()
     {
-        AppState.GetSpecificState<EditToolState>().State = EditState.CreatePerson;
+        AppStateContext.CurrentToolState.Fire(new CreatePersonCommand());
     }
 
     public void Cancel()
     {
-        AppState.GetSpecificState<EditToolState>().State = EditState.Initial;
+        AppStateContext.CurrentToolState.Fire(new CancelCommand());
     }
 }

@@ -1,18 +1,18 @@
 ﻿@rendermode InteractiveServer
-@inject IAppStateService AppState
+@inject IAppStateContext AppStateContext
 
 <div class="panel"> 
-    @AppState.CurrentToolState.RenderPanel() 
+    @AppStateContext.CurrentToolState.RenderPanel() 
 </div>
 
 @code {
     protected override void OnInitialized()
     {
-        AppState.OnChange += StateHasChanged; // Subscribe to state changes
+        AppStateContext.OnChange += StateHasChanged; // Subscribe to state changes
     }
 
     public void Dispose()
     {
-        AppState.OnChange -= StateHasChanged; // Unsubscribe from state changes
+        AppStateContext.OnChange -= StateHasChanged; // Unsubscribe from state changes
     }
 }

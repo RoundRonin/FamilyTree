@@ -2,7 +2,8 @@
 @using FamilyTreeBlazor.presentation.Models
 @using FamilyTreeBlazor.presentation.Infrastructure
 @using FamilyTreeBlazor.presentation.Controllers.Interfaces;
-@inject IAppStateService AppState
+@using FamilyTreeBlazor.presentation.Services.Commands
+@inject IAppStateContext AppStateContext
 @inject IPersonController PersonController
 
 <h3>Edit mode: @Text</h3>
@@ -57,6 +58,6 @@
 
     public void Cancel()
     {
-        AppState.GetSpecificState<EditToolState>().State = EditState.Initial;
+        AppStateContext.CurrentToolState.Fire(new CancelCommand());
     }
 }

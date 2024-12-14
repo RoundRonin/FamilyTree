@@ -2,7 +2,7 @@
 @using FamilyTreeBlazor.presentation.Models
 @using FamilyTreeBlazor.BLL.DTOs
 @using FamilyTreeBlazor.presentation.Controllers.Interfaces
-@inject IAppStateService AppState
+@inject IAppStateContext AppStateContext
 @inject IPersonController PersonController
 
 <h3>Ancestor age</h3>
@@ -36,14 +36,13 @@ else
 
     private void GetAncestorAge()
     {
-        // TEMP fix
-        CalculatedAge = PersonController.GetAncestorAge(Person.Id, Ancestor.Id);
+        CalculatedAge = PersonController.GetAncestorAge(Ancestor.Id, Person.Id);
         if (CalculatedAge != null) CalculatedAge = (int)Math.Abs((decimal)CalculatedAge);
     }
 
     protected override void OnInitialized()
     {
-        AppState.OnChange += OnAppStateChange;
+        AppStateContext.OnChange += OnAppStateChange;
         GetAncestorAge();
     }
 
@@ -55,6 +54,6 @@ else
 
     public void Dispose()
     {
-        AppState.OnChange -= OnAppStateChange;
+        AppStateContext.OnChange -= OnAppStateChange;
     }
 }

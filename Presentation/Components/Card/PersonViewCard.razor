@@ -1,6 +1,6 @@
 ﻿@using System
 @using FamilyTreeBlazor.presentation.Models
-@inject IAppStateService AppState
+@inject IAppStateContext AppStateContext
 
 <div class="person-card">
     <MudCard Class="@GetCardClass(State)">
@@ -24,12 +24,12 @@
 
     protected override void OnInitialized()
     {
-        AppState.OnChange += StateHasChanged; // Subscribe to state changes
+        AppStateContext.OnChange += StateHasChanged; // Subscribe to state changes
     }
 
     public void Dispose()
     {
-        AppState.OnChange -= StateHasChanged; // Unsubscribe from state changes
+        AppStateContext.OnChange -= StateHasChanged; // Unsubscribe from state changes
     }
 
     private string GetCardClass(CardState state)

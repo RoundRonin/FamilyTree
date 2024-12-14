@@ -95,17 +95,17 @@ public class FamilyTreeService(IPersonService personService, IRelationshipServic
             throw new Exception("Person not found");
         }
 
-        //if (!IsDescendant(ancestor, descendant))
-        //{
-        //    throw new InvalidOperationException("The specified person is not a descendant of the ancestor.");
-        //}
-
-        if (GetAllAncestors(descendant).Contains(_personService.GetPersonById(ancestorId)))
+        if (!IsDescendant(ancestor, descendant))
         {
             throw new InvalidOperationException("The specified person is not a descendant of the ancestor.");
         }
 
-        return descendant.BirthDateTime.Year - ancestor.BirthDateTime.Year;
+        //if (GetAllAncestors(descendant).Contains(_personService.GetPersonById(ancestorId)))
+        //{
+        //    throw new InvalidOperationException("The specified person is not a descendant of the ancestor.");
+        //}
+
+        return ancestor.BirthDateTime.Year - descendant.BirthDateTime.Year;
     }
 
     // This method is a bruteforce solution. Testing is needed to evaluate performance and change it potentially

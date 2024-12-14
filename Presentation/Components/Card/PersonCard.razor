@@ -1,9 +1,9 @@
 ﻿@using FamilyTreeBlazor.presentation.Models
 @rendermode InteractiveServer
-@inject IAppStateService AppState
+@inject IAppStateContext AppStateContext
 
-<div class="@(AppState.DraggingOn ? "panel" : "panel-cursor")"> 
-    @AppState.CurrentToolState.RenderCard(Person) 
+<div class="@(AppStateContext.DraggingOn ? "panel" : "panel-cursor")"> 
+    @AppStateContext.CurrentToolState.RenderCard(Person) 
 </div>
 
 @code {
@@ -12,11 +12,11 @@
 
     protected override void OnInitialized()
     {
-        AppState.OnChange += StateHasChanged; // Subscribe to state changes
+        AppStateContext.OnChange += StateHasChanged; // Subscribe to state changes
     }
 
     public void Dispose()
     {
-        AppState.OnChange -= StateHasChanged; // Unsubscribe from state changes
+        AppStateContext.OnChange -= StateHasChanged; // Unsubscribe from state changes
     }
 }

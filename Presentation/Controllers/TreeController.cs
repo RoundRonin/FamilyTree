@@ -1,24 +1,24 @@
-using FamilyTreeBlazor.presentation.Infrastructure;
 using FamilyTreeBlazor.presentation.Services.Interfaces;
 using FamilyTreeBlazor.presentation.Controllers.Interfaces;
 using Microsoft.JSInterop;
-using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
 using FamilyTreeBlazor.presentation.Models;
+using FamilyTreeBlazor.presentation.State.Interfaces;
+using FamilyTreeBlazor.presentation.Services.Commands;
 
 namespace FamilyTreeBlazor.presentation.Controllers;
 
 public class TreeController : IDisposable, ITreeController
 {
     private readonly IJSRuntime _jsRuntime;
-    private readonly IAppStateService _appStateService;
+    private readonly IAppStateContext _appStateContext;
     private bool _disposed = false;
 
     public IPresentationService PresentationService { get; private set; }
 
-    public TreeController(IJSRuntime jsRuntime, IAppStateService appStateService, IPresentationService presentationService)
+    public TreeController(IJSRuntime jsRuntime, IAppStateContext appStateContext, IPresentationService presentationService)
     {
         _jsRuntime = jsRuntime;
-        _appStateService = appStateService;
+        _appStateContext = appStateContext;
         PresentationService = presentationService;
 
         Initialize();
@@ -40,17 +40,7 @@ public class TreeController : IDisposable, ITreeController
 
             await RenderTree();
 
-            _appStateService.OnChange += async () =>
-            {
-                await _jsRuntime.InvokeVoidAsync("setDraggingOn", _appStateService.DraggingOn);
-                bool isEditMode = _appStateService.CurrentToolState is EditToolState;
-                bool isChoosingMode = false;
-                if (isEditMode)
-                {
-                    isChoosingMode = _appStateService.GetSpecificState<EditToolState>().State == EditState.ChoosePerson;
-                }
-                await _jsRuntime.InvokeVoidAsync("setEditMode", isEditMode && isChoosingMode);
-            };
+            _appStateContext.OnChange += async () => await OnAppStateChanged();
         }
     }
 
@@ -95,7 +85,8 @@ public class TreeController : IDisposable, ITreeController
     public void BlazorClickHandler(string personId)
     {
         Console.WriteLine($"BlazorClickHandler invoked with Person ID: {personId}");
-        _appStateService.CurrentToolState.HandleId(int.Parse(personId));
+        var command = new HandleIdCommand(int.Parse(personId));
+        _appStateContext.CurrentToolState.Fire(command);
     }
 
     public void Dispose()
@@ -111,7 +102,7 @@ public class TreeController : IDisposable, ITreeController
 
         if (disposing)
         {
-            _appStateService.OnChange -= async () => await OnAppStateChanged();
+            _appStateContext.OnChange -= async () => await OnAppStateChanged();
             PresentationService.OnDataChanged -= async () => await UpdateTree();
         }
 
@@ -120,13 +111,9 @@ public class TreeController : IDisposable, ITreeController
 
     private async Task OnAppStateChanged()
     {
-        await _jsRuntime.InvokeVoidAsync("setDraggingOn", _appStateService.DraggingOn);
-        bool isEditMode = _appStateService.CurrentToolState is EditToolState;
-        bool isChoosingMode = false;
-        if (isEditMode)
-        {
-            isChoosingMode = _appStateService.GetSpecificState<EditToolState>().State == EditState.ChoosePerson;
-        }
-        await _jsRuntime.InvokeVoidAsync("setEditMode", isEditMode && isChoosingMode);
+        await _jsRuntime.InvokeVoidAsync("setDraggingOn", _appStateContext.DraggingOn);
+
+        var command = new SetEditStateJSCommand(_jsRuntime);
+        _appStateContext.CurrentToolState.Fire(command);
     }
 }

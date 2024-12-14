@@ -1,6 +1,13 @@
-﻿namespace FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
+using FamilyTreeBlazor.presentation.State.Interfaces;
 
-public enum EditState
+namespace FamilyTreeBlazor.presentation.State.EditState.Interfaces;
+
+public interface IEditToolState : IAppState 
+{
+    void AddPerson(int id);
+}
+
+public enum EditStateEnum
 {
     Initial,
     ChoosePerson,
@@ -15,7 +22,7 @@ public enum Relation
     Spouse
 }
 
-public struct DisabledRelations 
+public struct DisabledRelations
 {
     public bool Parent;
     public bool Child;
@@ -25,9 +32,3 @@ public struct DisabledRelations
     public void Enable() { Parent = false; Child = false; Spouse = false; }
     public void Disable() { Parent = true; Child = true; Spouse = true; }
 }
-
-public interface IEditToolState : IToolState
-{
-    public EditState State { get; set; }
-}
-
