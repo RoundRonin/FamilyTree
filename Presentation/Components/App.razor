@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using FamilyTreeBlazor.presentation.Components.Layout
+@using FamilyTreeBlazor.presentation.Components.Pages
+
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -7,13 +10,16 @@
     <base href="/" />
     <link rel="stylesheet" href="bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="app.css" />
-    <link rel="stylesheet" href="FamilyTreeBlazor.styles.css" />
+    <link rel="stylesheet" href="FamilyTreeBlazor.presentation.styles.css" />
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <link rel="icon" type="image/png" href="favicon.png" />
     <HeadOutlet />
 </head>
 
 <body>
-    <Routes />
+    <MainLayout>
+        <MainPage />
+    </MainLayout>
     <script src="_framework/blazor.web.js"></script>
 </body>
 

@@ -1,19 +1,22 @@
 ﻿@inherits LayoutComponentBase
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+    <!-- Header -->
+    <header class="top-row">
+        <h1 class="name">Family tree Manager</h1>
+        <a class="link" href="https://github.com/RoundRonin/FamilyTree" target="_blank">GitHub</a>
+    </header>
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
-        </div>
+    <!-- Main Content Area -->
+    <main class="layout-container">
 
-        <article class="content px-4">
-            @Body
+        <!-- Main Content -->
+        <article class="main-content">
+            @ChildContent
         </article>
+
     </main>
+
 </div>
 
 <div id="blazor-error-ui">
@@ -21,3 +24,7 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+}

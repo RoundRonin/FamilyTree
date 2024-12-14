@@ -6,10 +6,10 @@ using FamilyTreeBlazor.DAL.Infrastructure;
 namespace FamilyTreeBlazor.DAL;
 public class Repository<T> : IRepository<T> where T : class, IEntity
 {
-    private readonly DbContext _context;
+    private readonly ApplicationContext _context;
     private readonly DbSet<T> _dbSet;
 
-    public Repository(DbContext context)
+    public Repository(ApplicationContext context)
     {
         _context = context;
         _dbSet = _context.Set<T>();

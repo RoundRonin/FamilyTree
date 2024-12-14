@@ -1,9 +1,26 @@
+:root { 
+    --primary-color: #6188fd;
+    --secondary-color: #79abf5;
+    --background-color: #1e1e1e; 
+    --secondary-background-color: #282828; 
+    --text-color: #e1e1e1;
+    --link-color: #a4c7e6;
+
+    --header-size: 3rem;
+}
+
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-color);
+
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 a, .btn-link {
-    color: #006bb7;
+    color: var(--link-color);
+    text-decoration: none;
 }
 
 .btn-primary {
@@ -14,10 +31,6 @@ a, .btn-link {
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-.content {
-    padding-top: 1.1rem;
 }
 
 h1:focus {

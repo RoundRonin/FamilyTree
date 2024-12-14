@@ -1,0 +1,38 @@
+﻿@rendermode InteractiveServer
+@using FamilyTreeBlazor.presentation.Services
+@inject AppState AppState
+
+<div>
+    @if (AppState.SelectedTool == Tool.View)
+    {
+        <ViewMode />
+    }
+    else if (AppState.SelectedTool == Tool.Edit)
+    {
+        <EditMode />
+    }
+    else if (AppState.SelectedTool == Tool.AncestorAge)
+    {
+        <AncestorAge />
+    }
+    else if (AppState.SelectedTool == Tool.CommonAncestors)
+    {
+        <CommonAncestors />
+    }
+    else if (AppState.SelectedTool == Tool.DeleteTree)
+    {
+        <DeleteTree />
+    }
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged; // Subscribe to state changes
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged; // Unsubscribe from state changes
+    }
+}

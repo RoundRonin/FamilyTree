@@ -1,0 +1,34 @@
+﻿@rendermode InteractiveServer
+@using FamilyTreeBlazor.presentation.Services
+@using System.Diagnostics
+@inject AppState AppState
+
+@Tool
+<div class="toolbox-container">
+    <button @onclick="() => SelectTool(Tool.View)">View</button>
+    <button @onclick="() => SelectTool(Tool.Edit)">Edit</button>
+    <button @onclick="() => SelectTool(Tool.AncestorAge)">Ancestor Age</button>
+    <button @onclick="() => SelectTool(Tool.CommonAncestors)">Common Ancestors</button>
+    <button class="delete" @onclick="() => SelectTool(Tool.DeleteTree)">Delete Tree</button>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged; // Subscribe to state changes
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged; // Unsubscribe from state changes
+    }
+
+    Tool Tool = Tool.Edit;
+    private void SelectTool(Tool tool)
+    {
+        Debug.WriteLine("Selecting Tool...");
+        AppState.SelectedTool = tool;
+        AppState.NotifyStateChanged(); // Notify subscribers about the state change
+        Tool = tool;
+    }
+}
