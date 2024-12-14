@@ -1,0 +1,13 @@
+﻿.panel {
+    user-select: none;
+    cursor: default;
+}
+
+.panel:hover {
+    cursor: grab;
+}
+
+.panel *, .panel *:hover { 
+    user-select: none; 
+    cursor: inherit;
+}

@@ -1,0 +1,75 @@
+﻿@page "/treeview"
+@inject IJSRuntime JS
+@inject AppState AppState
+
+<div id="tree-container"></div>
+
+@code {
+    private readonly GraphNode[] nodes = new GraphNode[]
+    {
+        new GraphNode { Id = "1", Name = "Ivan Ivanov", Depth = 0 },
+        new GraphNode { Id = "2", Name = "Anna Petrova", Depth = 1 },
+        new GraphNode { Id = "3", Name = "Denis Petrov", Depth = 1 },
+        new GraphNode { Id = "4", Name = "Dasha Ivanova", Depth = 2 },
+        new GraphNode { Id = "5", Name = "Dio Brando", Depth = 0 },
+        new GraphNode { Id = "6", Name = "Jorno Jovana", Depth = 1 },
+        new GraphNode { Id = "7", Name = "Ann Jovana", Depth = 1 },
+        new GraphNode { Id = "8", Name = "Kudjo Jotaro", Depth = 2 },
+        new GraphNode { Id = "9", Name = "Katy Brando", Depth = 0 }
+    };
+
+    private readonly GraphLink[] links = new GraphLink[]
+    {
+        new GraphLink { Source = "1", Target = "2", Type = "parent-child" },
+        new GraphLink { Source = "2", Target = "3", Type = "spouse" },
+        new GraphLink { Source = "2", Target = "4", Type = "parent-child" },
+        new GraphLink { Source = "3", Target = "4", Type = "parent-child" },
+        new GraphLink { Source = "5", Target = "6", Type = "parent-child" },
+        new GraphLink { Source = "6", Target = "7", Type = "spouse" },
+        new GraphLink { Source = "6", Target = "8", Type = "parent-child" },
+        new GraphLink { Source = "7", Target = "8", Type = "parent-child" },
+        new GraphLink { Source = "5", Target = "9", Type = "spouse" },
+        new GraphLink { Source = "9", Target = "6", Type = "parent-child" },
+        new GraphLink { Source = "4", Target = "8", Type = "spouse" }
+    };
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var nodesHtml = nodes.Select(node => new {
+                node.Id,
+                node.Name,
+                node.Depth,
+                HtmlId = $"person-card-container-{node.Id}"
+            }).ToList();
+
+            var componentName = "person-card";
+            await JS.InvokeVoidAsync("renderD3Graph", nodesHtml, links, componentName, 180);
+
+            AppState.OnChange += async () =>
+            {
+                await JS.InvokeVoidAsync("setDraggingOn", AppState.DraggingOn);
+            };
+        }
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged;
+    }
+
+    public class GraphNode
+    {
+        public string Id { get; set; } = "Default";
+        public string Name { get; set; } = "Default";
+        public int Depth { get; set; }
+    }
+
+    public class GraphLink
+    {
+        public string Source { get; set; } = "0";
+        public string Target { get; set; } = "0";
+        public string Type { get; set; } = "spouse";
+    }
+}

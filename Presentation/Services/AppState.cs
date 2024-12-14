@@ -15,7 +15,30 @@ public enum Tool
 public class AppState
 {
     public TreeCacheDTO CachedTree { get; private set; } = new TreeCacheDTO();
-    public Tool SelectedTool { get; set; } = Tool.View;
+    
+    private Tool _selectedTool = Tool.View;
+    public Tool SelectedTool
+    {
+        get => _selectedTool;
+        set
+        {
+            _selectedTool = value;
+            NotifyStateChanged();
+        }
+    }
+
+    private bool _draggingOn = false;
+    public bool DraggingOn
+    {
+        get => _draggingOn;
+        set
+        {
+            _draggingOn = value;
+            Console.WriteLine("Changed dragging setting: " + _draggingOn);
+            NotifyStateChanged();
+        }
+    }
+
     public event Action? OnChange;
 
     public void InitializeCachedTree(TreeCacheDTO tree)
@@ -30,7 +53,7 @@ public class AppState
         NotifyStateChanged();
     }
 
-    public void NotifyStateChanged()
+    private void NotifyStateChanged()
     {
         Console.WriteLine(SelectedTool);
         OnChange?.Invoke();

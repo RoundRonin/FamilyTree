@@ -1,0 +1,18 @@
+﻿@using MudBlazor
+@using System
+
+<div class="person-card">
+    <MudCard>
+        <MudCardContent>
+            <h6>@Name</h6>
+            <p>@BirthDay.Year (@AgeHelper.GetAgeFromBirthDay(BirthDay))</p>
+        </MudCardContent>
+    </MudCard>
+</div>
+
+@code {
+    [Parameter]
+    public string Name { get; set; } = "Default";
+    [Parameter]
+    public DateTime BirthDay { get; set; } = DateTime.MinValue;
+}

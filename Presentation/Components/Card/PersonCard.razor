@@ -1,0 +1,34 @@
+﻿@rendermode InteractiveServer
+@using FamilyTreeBlazor.presentation.Services
+@inject AppState AppState
+
+<div class="panel">
+    @if (AppState.SelectedTool == Tool.Edit)
+    {
+        <PersonEditCard Name=@Name/>
+    }
+    else 
+    {
+        <PersonViewCard
+            Name=@Name
+            BirthDay=@BirthDay
+        />
+    }
+</div>
+
+@code {
+    [Parameter]
+    public string Name { get; set; } = "Default";
+    [Parameter]
+    public DateTime BirthDay { get; set; } = DateTime.MinValue;
+
+    protected override void OnInitialized()
+    {
+        AppState.OnChange += StateHasChanged; // Subscribe to state changes
+    }
+
+    public void Dispose()
+    {
+        AppState.OnChange -= StateHasChanged; // Unsubscribe from state changes
+    }
+}

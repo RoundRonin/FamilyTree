@@ -8,7 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 
 using FamilyTreeBlazor.presentation.Components;
+using FamilyTreeBlazor.presentation.Components.Card;
 using FamilyTreeBlazor.BLL.DTOs;
+using Microsoft.AspNetCore.Components.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +35,12 @@ builder.Services.AddScoped<AppState>();
 
 builder.Services.AddSingleton<TreeCacheDTO>();
 
-// Add services to the container
+// Register the component for JavaScript
+builder.Services.AddServerSideBlazor(options =>
+{
+    options.RootComponents.RegisterForJavaScript<PersonCard>(identifier: "person-card");
+});
+
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
@@ -45,6 +52,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
 }
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

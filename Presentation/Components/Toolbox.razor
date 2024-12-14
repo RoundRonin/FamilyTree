@@ -2,10 +2,13 @@
 @using FamilyTreeBlazor.presentation.Services
 @using System.Diagnostics
 @inject AppState AppState
-@* @inject DataService DataService 
- *@
+
 <div class="toolbox-container">
     <div class="main-block">
+        <MudTooltip Text="Toggle Dragging" Arrow="true" Placement="Placement.Right">
+            <MudFab Color="AppState.DraggingOn ? Color.Secondary : Color.Dark" Size="Size.Medium" StartIcon="@Icons.Material.Filled.AdsClick" @onclick="ToggleDragging"/>
+        </MudTooltip>
+        <br />
         <MudTooltip Text="View info" Arrow="true" Placement="Placement.Right">
             <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.RemoveRedEye" @onclick="() => SelectTool(Tool.View)"/>
         </MudTooltip>
@@ -45,9 +48,15 @@
     {
         Debug.WriteLine("Selecting Tool...");
         AppState.SelectedTool = tool;
-        AppState.NotifyStateChanged(); // Notify subscribers about the state change
         Tool = tool;
     }
+
+    private string getDraggingText()
+    {
+        return AppState.DraggingOn ? "Dragging ON" : "Dragging OFF";
+    }
+
+    private void ToggleDragging() { AppState.DraggingOn = !AppState.DraggingOn; }
 
     private void DeleteTree()
     {

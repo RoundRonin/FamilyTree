@@ -3,6 +3,7 @@
     --secondary-color: #79abf5;
     --background-color: #0d0f12; 
     --secondary-background-color: #13161b; 
+    --dots-background-color: #222936; 
     --text-color: #e1e1e1;
     --secondary-text-color: #acacac;
     --link-color: #a4c7e6;
@@ -17,6 +18,8 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
+
+    overflow: hidden;
 }
 
 a, .btn-link {

@@ -3,11 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FamilyTreeBlazor.presentation", "Presentation\FamilyTreeBlazor.presentation.csproj", "{5C712A57-12CC-41E5-97C0-9CC24FC31EA5}"
-	ProjectSection(ProjectDependencies) = postProject
-		{E30AB29D-6692-4B8B-855B-C15EA1C0A290} = {E30AB29D-6692-4B8B-855B-C15EA1C0A290}
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FamilyTreeBlazor.BLL", "BLL\FamilyTreeBlazor.BLL.csproj", "{E30AB29D-6692-4B8B-855B-C15EA1C0A290}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E603F33A-E011-4D1C-9DCA-6FD6D20BEAFF} = {E603F33A-E011-4D1C-9DCA-6FD6D20BEAFF}
@@ -17,16 +12,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FamilyTreeBlazor.DAL", "DAL
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FamilyTreeBlazor.Tests", "Tests\FamilyTreeBlazor.Tests.csproj", "{287056DE-EA88-416B-9411-9598A67982C9}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FamilyTreeBlazor.presentation", "Presentation\FamilyTreeBlazor.presentation.csproj", "{62709B09-F243-4274-998C-F47EAAC72D14}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E603F33A-E011-4D1C-9DCA-6FD6D20BEAFF} = {E603F33A-E011-4D1C-9DCA-6FD6D20BEAFF}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5C712A57-12CC-41E5-97C0-9CC24FC31EA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5C712A57-12CC-41E5-97C0-9CC24FC31EA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5C712A57-12CC-41E5-97C0-9CC24FC31EA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5C712A57-12CC-41E5-97C0-9CC24FC31EA5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E30AB29D-6692-4B8B-855B-C15EA1C0A290}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E30AB29D-6692-4B8B-855B-C15EA1C0A290}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E30AB29D-6692-4B8B-855B-C15EA1C0A290}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +35,10 @@ Global
 		{287056DE-EA88-416B-9411-9598A67982C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{287056DE-EA88-416B-9411-9598A67982C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{287056DE-EA88-416B-9411-9598A67982C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62709B09-F243-4274-998C-F47EAAC72D14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62709B09-F243-4274-998C-F47EAAC72D14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62709B09-F243-4274-998C-F47EAAC72D14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62709B09-F243-4274-998C-F47EAAC72D14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
