@@ -1,8 +1,10 @@
 ﻿@using FamilyTreeBlazor.BLL.DTOs
+@using FamilyTreeBlazor.presentation.Entities
 @using FamilyTreeBlazor.presentation.Infrastructure
 @inject IAppStateService AppState
+@inject ITreeService TreeService 
 
-<h3>Edit mode</h3>
+<h3>Edit mode: @Text</h3>
 
 <MudTextField @bind-Value=@name Label="Enter name" Variant="Variant.Text"></MudTextField>
 
@@ -15,6 +17,7 @@
 
     MaxDate=@DateTime.Today
     MinDate=@(new DateTime(1900, 1, 1))
+
 />
  
 <div class="radio"> 
@@ -29,6 +32,9 @@
 
 
 @code {
+    [Parameter]
+    public string Text { get; set; } = "Default";
+
     string? name = null;
     DateTime? dateTime = null;
     bool sex = true;
@@ -36,12 +42,22 @@
 
     public void AddPerson()
     {
-        throw new NotImplementedException("Adding person not implemented");
+        if (name != null && dateTime != null)
+        {
+            Relation relType = AppState.GetSpecificState<EditToolState>().RelationState;
+            Entities.RelationshipType relationshipType;
+
+            relationshipType = RelationTranslator.ToEntitiesRelationshipType(relType);
+
+            Person person = new(0, name, dateTime.Value, sex);
+            Relationship rel = new(AppState.GetSpecificState<EditToolState>().EditId, person.Id, relationshipType, true);
+
+            TreeService.AddPersonRelationship(person, rel, relType);
+        }
     }
 
     public void Cancel()
     {
-        //TODO
         AppState.GetSpecificState<EditToolState>().State = EditState.ChoosePerson;
     }
 }

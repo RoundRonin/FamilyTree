@@ -50,9 +50,9 @@ public class ViewToolState(IStateNotifier stateNotifier, ITreeService treeServic
             case ViewState.View:
                 builder.OpenComponent(0, typeof(ViewMode));
                 builder.AddAttribute(1, "PersonId", _viewId);
-                builder.AddAttribute(2, "Spouse", _spouse);
-                builder.AddAttribute(3, "ListKids", _kids);
-                builder.AddAttribute(4, "ListParents", _parents);
+                //builder.AddAttribute(2, "Spouse", _spouse);
+                //builder.AddAttribute(3, "ListKids", _kids);
+                //builder.AddAttribute(4, "ListParents", _parents);
                 builder.CloseComponent();
                 break;
             default:

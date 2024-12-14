@@ -1,10 +1,15 @@
-﻿@using MudBlazor
+﻿@using FamilyTreeBlazor.presentation.Entities
+@using FamilyTreeBlazor.presentation.Infrastructure
+@using MudBlazor
 @using System
+@inject IAppStateService AppState
+@inject ITreeService TreeService 
 
 <div class="person-card">
     <MudCard>
         <MudCardContent Class="flex-column">
-            ADDDDADDD
+            <h6>@Person.Name</h6>
+            <MudButton Variant="Variant.Filled" FullWidth="true" style="color: black" Color="Color.Tertiary" OnClick="() => CreateRelation()">Add relation</MudButton>
         </MudCardContent>
     </MudCard>
 </div>
@@ -13,23 +18,18 @@
     [Parameter]
     public CardState State { get; set; } = CardState.Default;
     [Parameter]
-    public string Name { get; set; } = "Default";
+    public required Person Person { get; set; }
+    [Parameter]
+    public DisabledRelations UnavailableRelations { get; set; }
 
-    private void AddChild()
+    private void CreateRelation()
     {
-        // Logic for adding a child
-        Console.WriteLine("Add Child clicked for " + Name);
-    }
+        Relation relType = AppState.GetSpecificState<EditToolState>().RelationState;
+        Entities.RelationshipType relationshipType;
+        relationshipType = RelationTranslator.ToEntitiesRelationshipType(relType);
 
-    private void AddSpouse()
-    {
-        // Logic for adding a spouse
-        Console.WriteLine("Add Spouse clicked for " + Name);
-    }
+        Relationship rel = new(AppState.GetSpecificState<EditToolState>().EditId, Person.Id, relationshipType, true);
 
-    private void AddParent()
-    {
-        // Logic for adding a parent
-        Console.WriteLine("Add Parent clicked for " + Name);
+        TreeService.AddRelationship(rel);
     }
 }

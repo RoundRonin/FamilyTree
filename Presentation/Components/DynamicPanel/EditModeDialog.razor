@@ -1,15 +1,28 @@
 ﻿@using FamilyTreeBlazor.BLL.DTOs
+@using FamilyTreeBlazor.presentation.Entities
 @using FamilyTreeBlazor.presentation.Infrastructure
 @inject IAppStateService AppState
 
-<h3>Edit mode</h3>
+<h3>Edit mode: @Text</h3>
 
-<p>Choose existing person or create a new one:</p>
-<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => CreatePerson()">Create a person</MudButton>
+<p>Choose existing person as a @Text or create a new one:</p>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => CreatePerson()">Create a @Text</MudButton>
+<MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="() => Cancel()">Cancel</MudButton>
 
 @code {
+    [Parameter]
+    public string Text { get; set; } = "Default";
+    // [Parameter]
+    // public required Person Person { get; set; }
+
+
     public void CreatePerson()
     {
         AppState.GetSpecificState<EditToolState>().State = EditState.CreatePerson;
+    }
+
+    public void Cancel()
+    {
+        AppState.GetSpecificState<EditToolState>().State = EditState.Initial;
     }
 }

@@ -6,9 +6,7 @@ public enum CardState
 {
     Default,
     HighlightedChosen,
-    ChooseSpouse,
-    ChooseChild,
-    ChooseParent,
+    Choose,
     HighlightedCommonAncestor,
 }
 

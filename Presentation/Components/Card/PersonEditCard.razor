@@ -1,19 +1,21 @@
-﻿@using MudBlazor
+﻿@using FamilyTreeBlazor.presentation.Infrastructure
+@using MudBlazor
 @using System
+@inject IAppStateService AppState
 
 <div class="person-card">
-    <MudCard>
+    <MudCard Class="@(State == CardState.HighlightedChosen ? "inward-border" : "")">
         <MudCardContent Class="flex-column">
             <h6>@Name</h6>
             <MudButtonGroup Color="Color.Tertiary" Variant="Variant.Outlined" FullWidth="true">
                 <MudTooltip Text="Add Child" Arrow="true" Placement="Placement.Right">
-                    <MudIconButton Icon="@Icons.Material.Filled.ChildCare" OnClick="AddChild"></MudIconButton>
+                    <MudIconButton Disabled="@(DisabledButtons.Child)" Icon="@Icons.Material.Filled.ChildCare" OnClick="AddChild"></MudIconButton>
                 </MudTooltip>
                 <MudTooltip Text="Add Spouse" Arrow="true" Placement="Placement.Right">
-                    <MudIconButton Icon="@Icons.Material.Filled.SupervisedUserCircle" OnClick="AddSpouse"></MudIconButton>
+                    <MudIconButton Disabled="@(DisabledButtons.Spouse)" Icon="@Icons.Material.Filled.SupervisedUserCircle" OnClick="AddSpouse"></MudIconButton>
                 </MudTooltip>
                 <MudTooltip Text="Add Parent" Arrow="true" Placement="Placement.Right">
-                    <MudIconButton Icon="@Icons.Material.Filled.Elderly" OnClick="AddParent"></MudIconButton>
+                    <MudIconButton Disabled="@(DisabledButtons.Parent)" Icon="@Icons.Material.Filled.Elderly" OnClick="AddParent"></MudIconButton>
                 </MudTooltip>
             </MudButtonGroup>
         </MudCardContent>
@@ -25,23 +27,25 @@
     public CardState State { get; set; } = CardState.Default;
     [Parameter]
     public string Name { get; set; } = "Default";
+    [Parameter]
+    public DisabledRelations DisabledButtons { get; set; } = new();
 
 
     private void AddChild()
     {
-        // Logic for adding a child
+        AppState.GetSpecificState<EditToolState>().SetState(EditState.ChoosePerson, Relation.Child);
         Console.WriteLine("Add Child clicked for " + Name);
     }
 
     private void AddSpouse()
     {
-        // Logic for adding a spouse
+        AppState.GetSpecificState<EditToolState>().SetState(EditState.ChoosePerson, Relation.Spouse);
         Console.WriteLine("Add Spouse clicked for " + Name);
     }
 
     private void AddParent()
     {
-        // Logic for adding a parent
+        AppState.GetSpecificState<EditToolState>().SetState(EditState.ChoosePerson, Relation.Parent);
         Console.WriteLine("Add Parent clicked for " + Name);
     }
 }

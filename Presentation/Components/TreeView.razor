@@ -1,4 +1,6 @@
 ﻿@page "/treeview"
+@using FamilyTreeBlazor.presentation.Entities
+@using FamilyTreeBlazor.presentation.Infrastructure
 @inject IJSRuntime JS
 @inject IAppStateService AppState
 @inject ITreeService TreeService
@@ -13,6 +15,11 @@
         AppState.CurrentToolState.HandleId( int.Parse(personId));
     }
 
+    protected override void OnInitialized() {
+        // Subscribe to the TreeService data change event 
+        TreeService.OnDataChanged += async () => await UpdateTree();
+    }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -22,33 +29,63 @@
             await JS.InvokeVoidAsync("registerBlazorClickHandler", DotNetObjectReference.Create(this));
             Console.WriteLine("Blazor click handler registered");
 
-            var nodesHtml = TreeService.PersonList.Select(node => new {
-                node.Id,
-                node.Name,
-                node.TreeDepth,
-                Person = node, // TEMP
-                HtmlId = $"person-card-container-{node.Id}"
-            }).ToList();
-
-            var links = TreeService.RelationshipList.Select(link => new
-            {
-                Source = link.PersonId1,
-                Target = link.PersonId2,
-                link.RelationshipType
-            }).ToList();
-
-            var componentName = "person-card";
-            await JS.InvokeVoidAsync("renderD3Graph", nodesHtml, links, componentName, 180);
+            await RenderTree();
 
             AppState.OnChange += async () =>
             {
                 await JS.InvokeVoidAsync("setDraggingOn", AppState.DraggingOn);
+                bool isEditMode = AppState.CurrentToolState is EditToolState;
+                bool isChoosingMode = AppState.GetSpecificState<EditToolState>().State is EditState.ChoosePerson;
+                await JS.InvokeVoidAsync("setEditMode", isEditMode && isChoosingMode);
             };
         }
+    }
+
+    private async Task RenderTree()
+    {
+        var nodesHtml = TreeService.PersonList.Select(node => new {
+            node.Id,
+            node.Name,
+            node.TreeDepth,
+            Person = node, // TEMP
+            HtmlId = $"person-card-container-{node.Id}"
+        }).ToList();
+
+        var links = TreeService.RelationshipList.Select(link => new
+        {
+            Source = link.PersonId1,
+            Target = link.PersonId2,
+            link.RelationshipType
+        }).ToList();
+
+        var componentName = "person-card";
+        await JS.InvokeVoidAsync("renderD3Graph", nodesHtml, links, componentName, 180);
+    }
+
+    // Method to update graph with new nodes and links
+    private async Task UpdateTree()
+    {
+        var nodesHtml = TreeService.PersonList.Select(node => new {
+            node.Id,
+            node.Name,
+            node.TreeDepth,
+            Person = node, // TEMP
+            HtmlId = $"person-card-container-{node.Id}"
+        }).ToList();
+
+        var links = TreeService.RelationshipList.Select(link => new
+        {
+            Source = link.PersonId1,
+            Target = link.PersonId2,
+            link.RelationshipType
+        }).ToList();
+
+        await JS.InvokeVoidAsync("updateGraph", nodesHtml, links);
     }
 
     public void Dispose()
     {
         AppState.OnChange -= StateHasChanged;
+        TreeService.OnDataChanged -= async () => await UpdateTree();
     }
 }

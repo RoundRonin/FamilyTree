@@ -1,4 +1,5 @@
 ﻿let draggingOn = false; // Initial value
+let editMode = false; // Initial value
 
 let blazorClickHandlerReference = null;
 
@@ -7,16 +8,61 @@ function registerBlazorClickHandler(blazorClickHandler) {
     console.log("Blazor click handler registered");
 }
 
-
 function setDraggingOn(value) {
     draggingOn = value;
-    console.log("DraggingOn set to:", draggingOn);
+}
+function setEditMode(value) {
+    editMode = value;
 }
 
-// Your existing renderD3Graph function
+let currentNodes = [];
+let currentLinks = [];
+let simulation; // Define simulation outside of renderD3Graph
+
+function updateGraph(newNodes, newLinks) {
+    console.log("Updating graph with new nodes and links...");
+    console.log("New Nodes:", newNodes);
+    console.log("New Links:", newLinks);
+
+    if (!simulation) {
+        console.error("Simulation is not initialized. Make sure renderD3Graph is called first.");
+        return;
+    }
+
+    // Add new nodes
+    newNodes.forEach(node => {
+        if (!currentNodes.find(n => n.id === node.id)) {
+            currentNodes.push(node);
+        }
+    });
+
+    // Add new links, checking that both source and target nodes exist
+    newLinks.forEach(link => {
+        if (currentNodes.find(n => n.id === link.source)
+            && currentNodes.find(n => n.id === link.target)
+            && !currentLinks.find(l => l.sourse === link.source && l.target === link.target)) {
+            currentLinks.push(link);
+        } else {
+            console.error(`Node not found: ${!currentNodes.find(n => n.id === link.source) ? link.source : link.target}`);
+        }
+    });
+
+    console.log("Current Nodes after update:", currentNodes);
+    console.log("Current Links after update:", currentLinks);
+
+    // Recalculate the simulation with the new data
+    simulation.nodes(currentNodes);
+    simulation.force("link").links(currentLinks);
+    simulation.alpha(1).restart();
+}
+
 async function renderD3Graph(nodes, links, componentName, containerWidth) {
-    console.log(nodes)
-    console.log(links)
+    console.log("Rendering D3 Graph...");
+    console.log("Initial Nodes:", nodes);
+    console.log("Initial Links:", links);
+
+    currentNodes = [...nodes];
+    currentLinks = [...links];
 
     const container = d3.select("#tree-container");
     const width = container.node().getBoundingClientRect().width || window.innerWidth;
@@ -35,8 +81,11 @@ async function renderD3Graph(nodes, links, componentName, containerWidth) {
             svg.attr("transform", event.transform);
         }));
 
-    const simulation = d3.forceSimulation(nodes)
-        .force("link", d3.forceLink(links).id(d => d.id)
+    const linkGroup = svg.append("g").attr("class", "links"); // Group for links
+    const nodeGroup = svg.append("g").attr("class", "nodes"); // Group for nodes
+
+    simulation = d3.forceSimulation(currentNodes) // Assign to the global variable
+        .force("link", d3.forceLink(currentLinks).id(d => d.id)
             .distance(d => {
                 if (d.relationshipType === 1) return 50 * multiplier;
                 if (d.relationshipType === 0) return 100 * multiplier;
@@ -55,14 +104,14 @@ async function renderD3Graph(nodes, links, componentName, containerWidth) {
         .on("tick", ticked);
 
     function ticked() {
-        const link = svg.selectAll('line')
-            .data(links)
+        const link = linkGroup.selectAll('line') // Use linkGroup for links
+            .data(currentLinks)
             .join('line')
             .attr('stroke', '#acacac')
             .attr("stroke-width", 5);
 
-        const node = svg.selectAll('foreignObject')
-            .data(nodes)
+        const node = nodeGroup.selectAll('foreignObject') // Use nodeGroup for nodes
+            .data(currentNodes)
             .join(
                 enter => enter.append('foreignObject')
                     .attr('width', containerWidth)
@@ -85,7 +134,7 @@ async function renderD3Graph(nodes, links, componentName, containerWidth) {
             .attr('x2', d => d.target.x)
             .attr('y2', d => d.target.y);
 
-        nodes.forEach(node => {
+        currentNodes.forEach(node => {
             let container = document.getElementById(`person-card-container-${node.id}`);
             if (!container.childElementCount) {
                 const parameters = { Person: node.person };
@@ -114,19 +163,10 @@ async function renderD3Graph(nodes, links, componentName, containerWidth) {
     }
 }
 
-//function invokeBlazorClick(personId) {
-//    console.log(`Clicked in person with id: ${personId}`);
-//    if (!draggingOn) {
-//        console.log("Passing the click to dotNet");
-//        DotNet.invokeMethodAsync('FamilyTreeBlazor.presentation', 'BlazorClickHandler', personId);
-//    }
-//    else 
-//        console.log("Turn dragging off to click");
-//}
 
 function invokeBlazorClick(personId) {
     console.log(`Clicked on person with id: ${personId}`);
-    if (!draggingOn) {
+    if (!draggingOn && !editMode) {
         console.log("Passing the click to dotNet");
         //Blazor.BlazorClickHandler(personId);
         blazorClickHandlerReference.invokeMethodAsync('BlazorClickHandler', personId)

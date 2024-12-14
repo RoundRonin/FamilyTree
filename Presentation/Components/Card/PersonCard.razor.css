@@ -4,6 +4,7 @@
 }
 
 .panel:hover {
+    user-select: none; 
     cursor: grab;
 }
 
@@ -13,14 +14,16 @@
 }
 
 .panel-coursor {
-    cursor: pointer;
+    user-select: none; 
+    cursor: default;
 }
 
 .panel-coursor:hover {
-    cursor: pointer;
+    user-select: none; 
+    cursor: default;
 }
 
 .panel-coursor *, .panel-coursor *:hover { 
     user-select: none; 
-    cursor: inherit;
+    cursor: default;
 }

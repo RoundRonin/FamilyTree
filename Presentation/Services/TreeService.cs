@@ -1,53 +1,56 @@
 ﻿using FamilyTreeBlazor.BLL.Infrastructure;
 using FamilyTreeBlazor.presentation.Entities;
+using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
 using FamilyTreeBlazor.presentation.Services.Interfaces;
 using static FamilyTreeBlazor.presentation.Components.TreeView;
 
 namespace FamilyTreeBlazor.presentation.Services;
 
-class TreeService(ITreeCache treeCache) : ITreeService
+class TreeService(ITreeCache treeCache, IStateNotifier stateNotifier) : ITreeService
 {
+
     public ITreeCache CachedTree { get; private set; } = treeCache;
     public List<Person> _personList = [
-        new(1, "Ivan Ivanov", DateTime.Now, true) { TreeDepth = 0 },
-        new(2, "Anna Petrova", DateTime.Now, false) { TreeDepth = 1 },
-        new(3, "Denis Pterov", DateTime.Now, true) { TreeDepth = 1 },
-        new(4, "Dasha Ivanova", DateTime.Now, false) { TreeDepth = 2 },
-        new(5, "Dio Brando", DateTime.Now, true) { TreeDepth = 0 },
-        new(6, "Jorno Jovana", DateTime.Now, true) { TreeDepth = 1 },
-        new(7, "Ann Jovana", DateTime.Now, false) { TreeDepth = 1 },
-        new(8, "Kudjo Jotaro", DateTime.Now, true) { TreeDepth = 2 },
-        new(9, "Katy Brando", DateTime.Now, false) { TreeDepth = 0 },
+        new(0, "Ivan Ivanov", DateTime.Now, true) { TreeDepth = 0, Links = { 1 } },
+        new(1, "Anna Petrova", DateTime.Now, false) { TreeDepth = 1, Links = { 1, 2, 3 } },
+        new(2, "Denis Pterov", DateTime.Now, true) { TreeDepth = 1, Links = { 2, 4 } },
+        new(3, "Dasha Ivanova", DateTime.Now, false) { TreeDepth = 2, Links = { 3, 4, 11 } },
+        new(4, "Dio Brando", DateTime.Now, true) { TreeDepth = 0, Links = { 5, 9 } },
+        new(5, "Jorno Jovana", DateTime.Now, true) { TreeDepth = 1, Links = { 5, 6, 7, 10 } },
+        new(6, "Ann Jovana", DateTime.Now, false) { TreeDepth = 1, Links = { 6, 8 } },
+        new(7, "Kudjo Jotaro", DateTime.Now, true) { TreeDepth = 2, Links = { 7, 8, 11 } },
+        new(8, "Katy Brando", DateTime.Now, false) { TreeDepth = 0, Links = { 9, 10 } },
     ];
+
     public List<Relationship> _relationshipList = [
-        new(1, 2, RelationshipType.Parent, true),
-        new(2, 3, RelationshipType.Spouse, true),
-        new(2, 4, RelationshipType.Parent, true),
-        new(3, 4, RelationshipType.Parent, true),
-        new(5, 6, RelationshipType.Parent, true),
-        new(6, 7, RelationshipType.Spouse, true),
-        new(6, 8, RelationshipType.Parent, true),
-        new(7, 8, RelationshipType.Parent, true),
-        new(5, 9, RelationshipType.Spouse, true),
-        new(9, 6, RelationshipType.Parent, true),
+        new(0, 1, RelationshipType.Parent, true),
+        new(1, 2, RelationshipType.Spouse, true),
+        new(1, 3, RelationshipType.Parent, true),
+        new(2, 3, RelationshipType.Parent, true),
+        new(4, 5, RelationshipType.Parent, true),
+        new(5, 6, RelationshipType.Spouse, true),
+        new(5, 7, RelationshipType.Parent, true),
+        new(6, 7, RelationshipType.Parent, true),
         new(4, 8, RelationshipType.Spouse, true),
+        new(8, 5, RelationshipType.Parent, true),
+        new(3, 7, RelationshipType.Spouse, true),
     ];
 
     public List<Person> PersonList {  get => _personList; }
     public List<Relationship> RelationshipList {  get => _relationshipList; }
 
+    public event Action OnDataChanged;
+
     public Person GetPerson(int Id)
     {
-        int IdFixed = Id - 1;
-
-        Person person = _personList[IdFixed];
+        Person person = _personList[Id];
         Console.WriteLine(person.Name);
         if (person == null) throw new Exception("relationship is broken");
 
         if (person.Id == Id) return person;
 
         _personList.Sort((x,y) => x.Id.CompareTo(y.Id));
-        person = _personList[IdFixed];
+        person = _personList[Id];
 
         if (person.Id == Id) return person;
 
@@ -88,7 +91,7 @@ class TreeService(ITreeCache treeCache) : ITreeService
         throw new NotImplementedException();
     }
 
-    public Person GetSpouse(int Id)
+    public Person? GetSpouse(int Id)
     {
         // TODO use getImmediateRelatives
         throw new NotImplementedException();
@@ -100,7 +103,7 @@ class TreeService(ITreeCache treeCache) : ITreeService
         throw new NotImplementedException();
     }
 
-    public void AddPersonRelationship(Person person, Relationship rel, InsertionType type)
+    public void AddPersonRelationship(Person person, Relationship rel, Relation type)
     {
         // check
         if (!ValidateRelationshipPerson(person, rel)) throw new Exception("relationship is broken");
@@ -114,28 +117,31 @@ class TreeService(ITreeCache treeCache) : ITreeService
 
         switch (type)
         {
-            case InsertionType.child:
-                depth--;
-                break;
-            case InsertionType.parent:
+            case Relation.Child:
                 depth++;
                 break;
-            case InsertionType.spouse:
+            case Relation.Parent:
+                depth--;
+                break;
+            case Relation.Spouse:
                 break;
             default:
                 break;
         }
+        // TEMP. Work with BLL
+        person.Id = PersonList.Count;
+        rel.PersonId2 = person.Id;
 
+        int newRelIdx = RelationshipList.Count;
         RelationshipList.Add(rel);
-        int newRelIdx = RelationshipList.Count - 1;
 
         person.TreeDepth = depth;
         person.Links.Add(newRelIdx);
         oldPerson.Links.Add(newRelIdx);
 
-        // TEMP. Work with BLL
-        person.Id = PersonList.Last().Id + 1;
         PersonList.Add(person);
+
+        NotifyOnChanged();
     }
 
     public void AddRelationship(Relationship rel)
@@ -150,6 +156,8 @@ class TreeService(ITreeCache treeCache) : ITreeService
 
         P1.Links.Add(newRelIdx);
         P2.Links.Add(newRelIdx);
+
+        NotifyOnChanged();
     }
 
     private static bool ValidateRelationshipPerson(Person person, Relationship relationship)
@@ -161,4 +169,10 @@ class TreeService(ITreeCache treeCache) : ITreeService
 
         return true;
     }
+
+    private void NotifyOnChanged()
+    {
+        OnDataChanged?.Invoke();
+    }
+
 }
