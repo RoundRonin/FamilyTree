@@ -1,24 +1,8 @@
 ﻿@rendermode InteractiveServer
-@using FamilyTreeBlazor.presentation.Services
 @inject IAppStateService AppState
 
-<div class="panel">
-    @if (AppState.SelectedTool == Tool.View)
-    {
-        <ViewMode />
-    }
-    else if (AppState.SelectedTool == Tool.Edit)
-    {
-        <EditMode />
-    }
-    else if (AppState.SelectedTool == Tool.AncestorAge)
-    {
-        <AncestorAge />
-    }
-    else if (AppState.SelectedTool == Tool.CommonAncestors)
-    {
-        <CommonAncestors />
-    }
+<div class="panel"> 
+    @AppState.CurrentToolState.RenderPanel() 
 </div>
 
 @code {

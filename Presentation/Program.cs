@@ -8,10 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 
 using FamilyTreeBlazor.presentation.Services;
-using FamilyTreeBlazor.presentation.Infrastructure;
 using FamilyTreeBlazor.presentation.Components;
 using FamilyTreeBlazor.presentation.Components.Card;
 using Microsoft.AspNetCore.Components.Web;
+using FamilyTreeBlazor.presentation.Services.Interfaces;
+using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
+using FamilyTreeBlazor.presentation.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +34,13 @@ builder.Services.AddScoped<IRelationshipService, RelationshipService>();
 builder.Services.AddScoped<IFamilyTreeService, FamilyTreeService>();
 builder.Services.AddScoped<IRepository<Person>, Repository<Person>>();
 builder.Services.AddScoped<IRepository<Relationship>, Repository<Relationship>>();
+
+builder.Services.AddScoped<IStateNotifier, StateNotifier>(); 
+builder.Services.AddScoped<IViewToolState, ViewToolState>();
+builder.Services.AddScoped<IEditToolState, EditToolState>();
+builder.Services.AddScoped<IAncestorAgeToolState, AncestorAgeToolState>();
+builder.Services.AddScoped<ICommonAncestorsToolState, CommonAncestorsToolState>();
+
 builder.Services.AddScoped<IAppStateService, AppStateService>();
 builder.Services.AddScoped<ITreeService, TreeService>();
 

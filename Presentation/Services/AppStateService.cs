@@ -1,57 +1,76 @@
 ﻿using FamilyTreeBlazor.presentation.Infrastructure;
+using FamilyTreeBlazor.presentation.Infrastructure.Interfaces;
+using FamilyTreeBlazor.presentation.Services.Interfaces;
 
 namespace FamilyTreeBlazor.presentation.Services;
 
 public class AppStateService : IAppStateService
 {
-    private Tool _selectedTool = Tool.View;
-    public Tool SelectedTool
+    private readonly IStateNotifier _stateNotifier;
+    private readonly Dictionary<Type, IToolState> _toolStates;
+    private IToolState _currentToolState;
+    private bool _isChangingState = false;
+
+    public AppStateService(IStateNotifier stateNotifier, IViewToolState viewToolState, IEditToolState editToolState,
+        IAncestorAgeToolState ancestorAgeToolState, ICommonAncestorsToolState commonAncestorsToolState)
     {
-        get => _selectedTool;
+        _stateNotifier = stateNotifier;
+
+        _toolStates = new Dictionary<Type, IToolState>
+        {
+            { typeof(ViewToolState), viewToolState },
+            { typeof(EditToolState), editToolState },
+            { typeof(AncestorAgeToolState), ancestorAgeToolState },
+            { typeof(CommonAncestorsToolState), commonAncestorsToolState }
+        };
+
+        _currentToolState = viewToolState; // Default state
+    }
+
+    public IToolState CurrentToolState
+    {
+        get => _currentToolState;
         set
         {
-            _selectedTool = value;
-            NotifyStateChanged();
+            if (_isChangingState) return;
+            _isChangingState = true;
+
+            _currentToolState = value;
+            _stateNotifier.NotifyStateChanged();
+
+            _isChangingState = false;
         }
     }
 
-    private bool _draggingOn = false;
+    public event Action? OnChange
+    {
+        add => _stateNotifier.StateChanged += value;
+        remove => _stateNotifier.StateChanged += value;
+    }
+
+    public void ChangeToolState<T>() where T : IToolState
+    {
+        if (_toolStates.TryGetValue(typeof(T), out var toolState))
+        {
+            _currentToolState = toolState;
+            _stateNotifier.NotifyStateChanged();
+        }
+    }
+
+    public T GetSpecificState<T>() where T : class, IToolState
+    {
+        return _currentToolState as T;
+    }
+
+    // Additional global states declared below
+    private bool _draggingOn = false; 
     public bool DraggingOn
     {
         get => _draggingOn;
         set
         {
             _draggingOn = value;
-            Console.WriteLine("Changed dragging setting: " + _draggingOn);
-            NotifyStateChanged();
+            _stateNotifier.NotifyStateChanged();
         }
-    }
-
-    public event Action? OnChange;
-
-
-
-
-    public int? ViewId { get; set; }
-    public int? EditId { get; set; }
-    public bool EditCreateNew { get; set; } = false;
-
-    private Queue<int> _ancestorAgeCandidatesIds = [];
-    public Queue<int> AncestorAgeCandidatesIds { 
-        get => _ancestorAgeCandidatesIds;
-        set => throw new NotImplementedException(); // Maintain 2 element structure with FIFO 
-    }
-
-    private Queue<int> _commonAncestorsCheckCandidatesIds = [];
-    public Queue<int> CommonAncestorsCheckCandidatesIds { 
-        get => _commonAncestorsCheckCandidatesIds;
-        set => throw new NotImplementedException(); // Maintain 2 element structure with FIFO
-    }
-
-
-    private void NotifyStateChanged()
-    {
-        Console.WriteLine(SelectedTool);
-        OnChange?.Invoke();
     }
 }

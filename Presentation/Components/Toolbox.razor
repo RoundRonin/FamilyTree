@@ -1,34 +1,33 @@
 ﻿@rendermode InteractiveServer
-@using FamilyTreeBlazor.presentation.Services
+@using FamilyTreeBlazor.presentation.Infrastructure
 @using System.Diagnostics
 @inject IAppStateService AppState
 
 <div class="toolbox-container">
     <div class="main-block">
         <MudTooltip Text="Toggle Dragging" Arrow="true" Placement="Placement.Right">
-            <MudFab Color="AppState.DraggingOn ? Color.Secondary : Color.Dark" Size="Size.Medium" StartIcon="@Icons.Material.Filled.AdsClick" @onclick="ToggleDragging"/>
+            <MudFab Color="@(AppState.DraggingOn ? Color.Secondary : Color.Dark)" Size="Size.Medium" StartIcon="@Icons.Material.Filled.AdsClick" @onclick="ToggleDragging"/>
         </MudTooltip>
         <br />
         <MudTooltip Text="View info" Arrow="true" Placement="Placement.Right">
-            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.RemoveRedEye" @onclick="() => SelectTool(Tool.View)"/>
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.RemoveRedEye" @onclick="() => SelectTool<ViewToolState>()"/>
         </MudTooltip>
         <MudTooltip Text="Ancestor Age" Arrow="true" Placement="Placement.Right">
-            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowUpward" @onclick="() => SelectTool(Tool.AncestorAge)"/>
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowUpward" @onclick="() => SelectTool<AncestorAgeToolState>()"/>
         </MudTooltip>
         <MudTooltip Text="Common Ancestors" Arrow="true" Placement="Placement.Right">
-            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonSearch" @onclick="() => SelectTool(Tool.CommonAncestors)"/>
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonSearch" @onclick="() => SelectTool<CommonAncestorsToolState>()"/>
         </MudTooltip>
         <MudTooltip Text="Edit tree" Arrow="true" Placement="Placement.Right">
-            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Edit" @onclick="() => SelectTool(Tool.Edit)"/>
+            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Edit" @onclick="() => SelectTool<EditToolState>()"/>
         </MudTooltip>
     </div>
     <div class="delete">
         <MudTooltip Text="Delete Tree" Arrow="true" Placement="Placement.Right">
-            <MudFab Color="Color.Dark" StartIcon="@Icons.Material.Filled.DeleteForever" @onclick="() => DeleteTree()"/>
+            <MudFab Color="Color.Dark" StartIcon="@Icons.Material.Filled.DeleteForever" @onclick="DeleteTree"/>
         </MudTooltip>
     </div>
 </div>
-
 
 @code {
     protected override void OnInitialized()
@@ -41,22 +40,21 @@
         AppState.OnChange -= StateHasChangedSafely; // Unsubscribe from state changes
     }
 
-    private async void StateHasChangedSafely() { await InvokeAsync(StateHasChanged); }
+    private async void StateHasChangedSafely() 
+    { 
+        await InvokeAsync(StateHasChanged); 
+    }
 
-    Tool Tool = Tool.Edit;
-    private void SelectTool(Tool tool)
+    private void SelectTool<T>() where T : IToolState
     {
         Debug.WriteLine("Selecting Tool...");
-        AppState.SelectedTool = tool;
-        Tool = tool;
+        AppState.ChangeToolState<T>();
     }
 
-    private string getDraggingText()
-    {
-        return AppState.DraggingOn ? "Dragging ON" : "Dragging OFF";
+    private void ToggleDragging() 
+    { 
+        AppState.DraggingOn = !AppState.DraggingOn; 
     }
-
-    private void ToggleDragging() { AppState.DraggingOn = !AppState.DraggingOn; }
 
     private void DeleteTree()
     {

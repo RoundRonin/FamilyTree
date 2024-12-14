@@ -1,6 +1,6 @@
 ﻿using FamilyTreeBlazor.BLL.Infrastructure;
 using FamilyTreeBlazor.presentation.Entities;
-namespace FamilyTreeBlazor.presentation.Infrastructure;
+namespace FamilyTreeBlazor.presentation.Services.Interfaces;
 
 public interface ITreeService
 {

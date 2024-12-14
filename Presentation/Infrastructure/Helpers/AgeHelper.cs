@@ -1,4 +1,4 @@
-﻿namespace FamilyTreeBlazor.presentation.Infrastructure;
+﻿namespace FamilyTreeBlazor.presentation.Infrastructure.Helpers;
 
 public static class AgeHelper
 {
