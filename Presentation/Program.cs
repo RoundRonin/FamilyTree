@@ -21,7 +21,6 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
     DbContextConfigurationHelper.Configure((DbContextOptionsBuilder<ApplicationContext>)options, connectionString));
 
 //builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(connectionStrig));
-    
 
 // Register repositories and services with DI
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

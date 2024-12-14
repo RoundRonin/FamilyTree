@@ -28,4 +28,15 @@
     <ProjectReference Include="..\BLL\FamilyTreeBlazor.BLL.csproj" />
   </ItemGroup>
 
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <!-- Unix-like systems -->
+	  <Exec Command="cd JavaScript &amp;&amp; yarn run build" Condition=" '$(OS)' != 'Windows_NT' " />
+	  <Exec Command="cp JavaScript/dist/*.js wwwroot" Condition=" '$(OS)' != 'Windows_NT' " />
+
+	  <!-- Windows -->
+	  <Exec Command="cd JavaScript &amp;&amp; yarn run build" Condition=" '$(OS)' == 'Windows_NT' " />
+	  <Exec Command="copy JavaScript\dist\*.js wwwroot" Condition=" '$(OS)' == 'Windows_NT' " />
+	</Target>
+
+
 </Project>
