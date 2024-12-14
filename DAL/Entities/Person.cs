@@ -1,8 +1,11 @@
-﻿using DAL.Infrastructure;
+﻿using FamilyTreeBlazor.DAL.Infrastructure;
 
-namespace DAL.Entities;
+namespace FamilyTreeBlazor.DAL.Entities;
 
-internal class Person : IEntity
+public class Person(string Name, DateTime BirthDateTime, bool Sex) : IEntity
 {
-    public int Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+    public int Id { get; set; }
+    public string Name { get; set; } = Name;
+    public DateTime BirthDateTime { get; set; } = BirthDateTime;
+    public bool Sex { get; set; } = Sex;
 }
