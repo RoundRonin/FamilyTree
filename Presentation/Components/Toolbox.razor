@@ -2,6 +2,7 @@
 @using FamilyTreeBlazor.presentation.Infrastructure
 @using System.Diagnostics
 @inject IAppStateService AppState
+@inject ITreeService TreeService
 
 <div class="toolbox-container">
     <div class="main-block">
@@ -58,6 +59,6 @@
 
     private void DeleteTree()
     {
-        throw new NotImplementedException("Delete not implemented");
+        TreeService.DeleteTree();
     }
 }

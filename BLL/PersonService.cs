@@ -10,9 +10,9 @@ public class PersonService(IRepository<Person> personRepository, ITreeCache tree
     private readonly IRepository<Person> _personRepository = personRepository;
     private readonly ITreeCache _treeCache = treeCache;
 
-    public async Task AddPersonAsync(PersonDTO person)
+    public async Task<int> AddPersonAsync(PersonDTO person)
     {
-        var entity = new Person(person.Name, person.BirthDateTime, person.Sex);
+        var entity = new Person(person.Name, person.BirthDateTime.ToUniversalTime(), person.Sex);
         await _personRepository.AddAsync(entity);
 
         person.Id = entity.Id;
@@ -22,6 +22,7 @@ public class PersonService(IRepository<Person> personRepository, ITreeCache tree
         }
 
         _treeCache.Persons[person.Id.Value] = person;
+        return person.Id.Value;
     }
 
     public PersonDTO? GetPersonById(int id)

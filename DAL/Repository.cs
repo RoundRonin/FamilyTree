@@ -2,70 +2,112 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using FamilyTreeBlazor.DAL.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FamilyTreeBlazor.DAL;
 public class Repository<T> : IRepository<T> where T : class, IEntity
 {
-    private readonly ApplicationContext _context;
-    private readonly DbSet<T> _dbSet;
+    private readonly IServiceScopeFactory _scopeFactory;
 
-    public Repository(ApplicationContext context)
+    public Repository(IServiceScopeFactory scopeFactory)
     {
-        _context = context;
-        _dbSet = _context.Set<T>();
+        _scopeFactory = scopeFactory;
     }
 
     public async Task AddAsync(T entity)
     {
-        await _dbSet.AddAsync(entity);
-        await _context.SaveChangesAsync();
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+            var dbSet = context.Set<T>();
+            await dbSet.AddAsync(entity);
+            await context.SaveChangesAsync();
+        }
     }
 
     public async Task UpdateAsync(T entity)
     {
-        _dbSet.Update(entity);
-        await _context.SaveChangesAsync();
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+            var dbSet = context.Set<T>();
+            dbSet.Update(entity);
+            await context.SaveChangesAsync();
+        }
     }
 
     public async Task DeleteAsync(T entity)
     {
-        _dbSet.Remove(entity);
-        await _context.SaveChangesAsync();
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+            var dbSet = context.Set<T>();
+            dbSet.Remove(entity);
+            await context.SaveChangesAsync();
+        }
     }
-    public async Task DeleteAsync(int Id)
-    {
-        T entity = await RetrieveByIdAsync(Id) 
-            ?? throw new InvalidOperationException($"Entity of type {typeof(T)} with Id {Id} not found.");
 
-        _dbSet.Remove(entity);
-        await _context.SaveChangesAsync();
+    public async Task DeleteAsync(int id)
+    {
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+            var dbSet = context.Set<T>();
+            T entity = await dbSet.FindAsync(id)
+                ?? throw new InvalidOperationException($"Entity of type {typeof(T)} with Id {id} not found.");
+            dbSet.Remove(entity);
+            await context.SaveChangesAsync();
+        }
     }
 
     public async Task<T?> RetrieveByIdAsync(int id)
     {
-        return await _dbSet.FindAsync(id);
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+            var dbSet = context.Set<T>();
+            return await dbSet.FindAsync(id);
+        }
     }
 
     public async Task<IEnumerable<T>> GetAllAsync()
     {
-        return await _dbSet.ToListAsync();
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+            var dbSet = context.Set<T>();
+            return await dbSet.ToListAsync();
+        }
     }
 
     public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate)
     {
-        return await _dbSet.Where(predicate).ToListAsync();
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+            var dbSet = context.Set<T>();
+            return await dbSet.Where(predicate).ToListAsync();
+        }
     }
 
     public async Task TruncateTableAsync()
     {
-        var tableName = _context.Model.FindEntityType(typeof(T)).GetTableName();
-        try
+        using (var scope = _scopeFactory.CreateScope())
         {
-            await _context.Database.ExecuteSqlAsync($"TRUNCATE TABLE {tableName}");
-        }
-        catch (DbUpdateException dbEx) when (IsTableNotFoundException(dbEx))
-        {
-            throw new InvalidOperationException($"Table '{tableName}' not found.", dbEx);
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationContext>();
+            var tableName = context.Model.FindEntityType(typeof(T)).GetTableName();
+
+            // Ensure the table name is quoted to preserve case sensitivity
+            tableName = $"\"{tableName}\"";
+
+            try
+            {
+                await context.Database.ExecuteSqlRawAsync($"TRUNCATE TABLE {tableName}");
+            }
+            catch (DbUpdateException dbEx) when (IsTableNotFoundException(dbEx))
+            {
+                throw new InvalidOperationException($"Table '{tableName}' not found.", dbEx);
+            }
         }
     }
 
@@ -74,5 +116,4 @@ public class Repository<T> : IRepository<T> where T : class, IEntity
         return dbEx.InnerException is PostgresException postgresEx &&
                postgresEx.SqlState == "42P01"; // "Relation does not exist" exception
     }
-
 }

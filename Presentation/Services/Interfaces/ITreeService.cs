@@ -15,14 +15,13 @@ public interface ITreeService
     public Person GetPerson(int id);
 
     // General tree workflow
-    public void InitializeTree();
     public void UpdateTree();
     public void DeleteTree();
 
     // Geting relevant business info
     public Person FindPerson(int Id);
-    public PersonListDTO GetKids(int Id);
-    public PersonListDTO GetParents(int Id);
+    public IEnumerable<Person> GetChildren(int Id);
+    public IEnumerable<Person> GetParents(int Id);
     public Person? GetSpouse(int Id);
     public Dictionary<int, CardState> GetCommonAncestors(int Id1, int Id2);
 

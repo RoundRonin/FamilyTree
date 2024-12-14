@@ -23,8 +23,11 @@ builder.Services.AddMudServices();
 var connectionString = DbContextConfigurationHelper.BuildConnectionString();
 
 builder.Services.AddDbContext<ApplicationContext>(options =>
-    DbContextConfigurationHelper.Configure((DbContextOptionsBuilder<ApplicationContext>)options, connectionString));
+    DbContextConfigurationHelper.Configure((DbContextOptionsBuilder<ApplicationContext>)options, connectionString), ServiceLifetime.Scoped);
 
+builder.Services.AddScoped<DbContextFactory>();
+
+builder.Services.AddSingleton<IServiceScopeFactory>(provider => provider.GetRequiredService<IServiceProvider>().CreateScope().ServiceProvider.GetRequiredService<IServiceScopeFactory>());
 //builder.Services.AddDbContext<ApplicationContext>(options => options.UseNpgsql(connectionStrig));
 
 // Register repositories and services with DI

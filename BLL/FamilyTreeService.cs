@@ -52,6 +52,40 @@ public class FamilyTreeService(IPersonService personService, IRelationshipServic
 
         return relatives;
     }
+    public IEnumerable<PersonDTO> GetParents(int personId)
+    {
+        if (!_treeCache.Persons.TryGetValue(personId, out var person))
+        {
+            return [];
+        }
+
+        List<PersonDTO> relatives = [];
+        relatives.AddRange(person.Parents);
+
+        return relatives;
+    }
+
+    public IEnumerable<PersonDTO> GetChildren(int personId)
+    {
+        if (!_treeCache.Persons.TryGetValue(personId, out var person))
+        {
+            return [];
+        }
+
+        List<PersonDTO> relatives = [];
+        relatives.AddRange(person.Children);
+
+        return relatives;
+    }
+    public PersonDTO? GetSpouse(int personId)
+    {
+        if (!_treeCache.Persons.TryGetValue(personId, out var person))
+        {
+            return null;
+        }
+
+        return person.Spouse;
+    }
 
     public int CalculateAncestorAgeAtBirth(int ancestorId, int descendantId)
     {
