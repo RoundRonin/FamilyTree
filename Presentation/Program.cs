@@ -5,11 +5,15 @@ using FamilyTreeBlazor.DAL.Entities;
 using FamilyTreeBlazor.DAL.Infrastructure;
 using FamilyTreeBlazor.presentation.Services;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
 
 using FamilyTreeBlazor.presentation.Components;
 using FamilyTreeBlazor.BLL.DTOs;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// UI
+builder.Services.AddMudServices();
 
 var connectionString = DbContextConfigurationHelper.BuildConnectionString();
 
@@ -26,9 +30,9 @@ builder.Services.AddScoped<IRelationshipService, RelationshipService>();
 builder.Services.AddScoped<IFamilyTreeService, FamilyTreeService>();
 builder.Services.AddScoped<IRepository<Person>, Repository<Person>>();
 builder.Services.AddScoped<IRepository<Relationship>, Repository<Relationship>>();
-builder.Services.AddSingleton<TreeCacheDTO>();
-builder.Services.AddSingleton<AppState>();
+builder.Services.AddScoped<AppState>();
 
+builder.Services.AddSingleton<TreeCacheDTO>();
 
 // Add services to the container
 builder.Services.AddRazorComponents()

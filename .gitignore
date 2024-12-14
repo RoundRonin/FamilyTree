@@ -365,3 +365,4 @@ FodyWeavers.xsd
 .env
 .VSCode
 */Migrations/*
+/MyApplication

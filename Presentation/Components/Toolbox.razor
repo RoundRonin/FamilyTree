@@ -3,25 +3,41 @@
 @using System.Diagnostics
 @inject AppState AppState
 
-@Tool
 <div class="toolbox-container">
-    <button @onclick="() => SelectTool(Tool.View)">View</button>
-    <button @onclick="() => SelectTool(Tool.Edit)">Edit</button>
-    <button @onclick="() => SelectTool(Tool.AncestorAge)">Ancestor Age</button>
-    <button @onclick="() => SelectTool(Tool.CommonAncestors)">Common Ancestors</button>
-    <button class="delete" @onclick="() => SelectTool(Tool.DeleteTree)">Delete Tree</button>
+    <div class="main-block">
+        <MudTooltip Text="View" Arrow="true" Placement="Placement.Right">
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.RemoveRedEye" @onclick="() => SelectTool(Tool.View)"/>
+        </MudTooltip>
+        <MudTooltip Text="Edit" Arrow="true" Placement="Placement.Right">
+            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Edit" @onclick="() => SelectTool(Tool.Edit)"/>
+        </MudTooltip>
+        <MudTooltip Text="Ancestor Age" Arrow="true" Placement="Placement.Right">
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowUpward" @onclick="() => SelectTool(Tool.AncestorAge)"/>
+        </MudTooltip>
+        <MudTooltip Text="Common Ancestors" Arrow="true" Placement="Placement.Right">
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonSearch" @onclick="() => SelectTool(Tool.CommonAncestors)"/>
+        </MudTooltip>
+    </div>
+    <div class="delete">
+        <MudTooltip Text="Delete Tree" Arrow="true" Placement="Placement.Right">
+            <MudFab Color="Color.Error" StartIcon="@Icons.Material.Filled.DeleteForever" @onclick="() => SelectTool(Tool.DeleteTree)"/>
+        </MudTooltip>
+    </div>
 </div>
+
 
 @code {
     protected override void OnInitialized()
     {
-        AppState.OnChange += StateHasChanged; // Subscribe to state changes
+        AppState.OnChange += StateHasChangedSafely; // Subscribe to state changes
     }
 
     public void Dispose()
     {
-        AppState.OnChange -= StateHasChanged; // Unsubscribe from state changes
+        AppState.OnChange -= StateHasChangedSafely; // Unsubscribe from state changes
     }
+
+    private async void StateHasChangedSafely() { await InvokeAsync(StateHasChanged); }
 
     Tool Tool = Tool.Edit;
     private void SelectTool(Tool tool)
