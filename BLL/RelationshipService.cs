@@ -5,10 +5,10 @@ using FamilyTreeBlazor.BLL.Infrastructure;
 
 namespace FamilyTreeBlazor.BLL;
 
-public class RelationshipService(IRepository<Relationship> relationshipRepository, TreeCacheDTO treeCache) : IRelationshipService
+public class RelationshipService(IRepository<Relationship> relationshipRepository, ITreeCache treeCache) : IRelationshipService
 {
     private readonly IRepository<Relationship> _relationshipRepository = relationshipRepository;
-    private readonly TreeCacheDTO _treeCache = treeCache;
+    private readonly ITreeCache _treeCache = treeCache;
 
     public async Task AddParentChildRelationshipAsync(int parentId, int childId)
     {

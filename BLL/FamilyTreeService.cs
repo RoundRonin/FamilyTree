@@ -3,11 +3,11 @@ using FamilyTreeBlazor.BLL.Infrastructure;
 
 namespace FamilyTreeBlazor.BLL;
 
-public class FamilyTreeService(IPersonService personService, IRelationshipService relationshipService, TreeCacheDTO treeCache) : IFamilyTreeService
+public class FamilyTreeService(IPersonService personService, IRelationshipService relationshipService, ITreeCache treeCache) : IFamilyTreeService
 {
     private readonly IPersonService _personService = personService;
     private readonly IRelationshipService _relationshipService = relationshipService;
-    private readonly TreeCacheDTO _treeCache = treeCache;
+    private readonly ITreeCache _treeCache = treeCache;
 
     public async Task InitializeTreeAsync()
     {
