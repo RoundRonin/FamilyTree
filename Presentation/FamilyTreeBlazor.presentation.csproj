@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Components\DynamicPanel\EditMode.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Components\DynamicPanel\EditMode.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
       <PrivateAssets>all</PrivateAssets>

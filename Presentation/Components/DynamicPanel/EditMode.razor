@@ -1,5 +1,44 @@
-﻿<h3>Edit mode</h3>
+﻿@using FamilyTreeBlazor.BLL.DTOs
+
+<h3>Edit mode</h3>
+
+<MudTextField @bind-Value=@name Label="Enter name" Variant="Variant.Text"></MudTextField>
+
+<MudDatePicker 
+    Label="Enter birthday" 
+    Editable="true" @bind-Date=@dateTime
+    Mask="@(new DateMask("MM/dd/yyyy"))" 
+    DateFormat="MM/dd/yyyy" 
+    Placeholder="en-US Date" 
+
+    MaxDate=@DateTime.Today
+    MinDate=@(new DateTime(1900, 1, 1))
+/>
+ 
+<div class="radio"> 
+    <MudRadioGroup @bind-Value=@sex>
+        <MudRadio Value="true" Color="Color.Primary" Dense="true">Male</MudRadio>
+        <MudRadio Value="false" Color="Color.Secondary" Dense="false">Female</MudRadio>
+    </MudRadioGroup>
+</div>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => AddPerson()">Add person</MudButton>
+<MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="() => Cancel()">Cancel</MudButton>
+
 
 @code {
+    string? name = null;
+    DateTime? dateTime = null;
+    bool sex = true;
 
+
+    public void AddPerson()
+    {
+        throw new NotImplementedException("Adding person not implemented");
+    }
+
+    public void Cancel()
+    {
+        throw new NotImplementedException("Canceling adding person not implemented");
+    }
 }
