@@ -1,4 +1,6 @@
 ﻿@using FamilyTreeBlazor.BLL.DTOs
+@using FamilyTreeBlazor.presentation.Infrastructure
+@inject IAppStateService AppService
 
 <h3>Edit mode</h3>
 
@@ -39,6 +41,7 @@
 
     public void Cancel()
     {
-        throw new NotImplementedException("Canceling adding person not implemented");
+        //TODO
+        AppService.GetSpecificState<EditToolState>().ToggleEditCreateNew();
     }
 }

@@ -22,17 +22,25 @@ public class EditToolState(IStateNotifier stateNotifier) : ToolStateBase(stateNo
     public bool EditCreateNew
     {
         get => _editCreateNew;
-        set
-        {
-            _editCreateNew = value;
-            NotifyStateChanged();
-        }
     }
+
+    public void ToggleEditCreateNew()
+    {
+        _editCreateNew = !_editCreateNew;
+        NotifyStateChanged();
+    } 
 
     public override RenderFragment RenderPanel() => builder =>
     {
-        builder.OpenComponent(0, typeof(EditMode));
-        builder.CloseComponent();
+        if (!_editCreateNew)
+        {
+            builder.OpenComponent(0, typeof(EditModeDialog));
+            builder.CloseComponent();
+        } else
+        {
+            builder.OpenComponent(0, typeof(EditMode));
+            builder.CloseComponent();
+        }
     };
 
     public override RenderFragment RenderCard(string name, DateTime birthDay) => builder =>

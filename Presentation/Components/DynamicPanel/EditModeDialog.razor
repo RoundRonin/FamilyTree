@@ -1,0 +1,15 @@
+﻿@using FamilyTreeBlazor.BLL.DTOs
+@using FamilyTreeBlazor.presentation.Infrastructure
+@inject IAppStateService AppState
+
+<h3>Edit mode</h3>
+
+<p>Choose existing person or create a new one:</p>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => CreatePerson()">Create a person</MudButton>
+
+@code {
+    public void CreatePerson()
+    {
+        AppState.GetSpecificState<EditToolState>().ToggleEditCreateNew();
+    }
+}

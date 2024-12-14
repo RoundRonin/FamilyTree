@@ -1,0 +1,33 @@
+﻿@using MudBlazor
+@using System
+
+<div class="person-card">
+    <MudCard>
+        <MudCardContent Class="flex-column">
+            ADDDDADDD
+        </MudCardContent>
+    </MudCard>
+</div>
+
+@code {
+    [Parameter]
+    public string Name { get; set; } = "Default";
+
+    private void AddChild()
+    {
+        // Logic for adding a child
+        Console.WriteLine("Add Child clicked for " + Name);
+    }
+
+    private void AddSpouse()
+    {
+        // Logic for adding a spouse
+        Console.WriteLine("Add Spouse clicked for " + Name);
+    }
+
+    private void AddParent()
+    {
+        // Logic for adding a parent
+        Console.WriteLine("Add Parent clicked for " + Name);
+    }
+}
