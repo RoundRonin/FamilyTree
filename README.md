@@ -47,6 +47,19 @@ Besides that some inherit to the main app sturctures patterns and techniques are
 
 Currently, there is a test project that was created for an older version of the App (where it had covered the entire BLL and DAL with around 30 tests), but it is hasn't been updated and is outdated as of now.
 
+### NuGet Packages Used
+
+- Microsoft.EntityFrameworkCore: Core EF package.
+- Microsoft.EntityFrameworkCore.Design: Design-time tools for EF.
+- Microsoft.EntityFrameworkCore.Tools: Command-line tools for EF.
+- DotNetEnv
+
+And some other packages for testing
+
+- xUnit
+- moq
+- EntityFrameworkCore.InMemory
+
 ## Initialization of the project
 
 ### Requirements:
@@ -82,7 +95,19 @@ docker compose up
 
 after the DB is running inside docker container run
 
-From the root of the project
+First, launch the container.
+
+To start:
+``` Sh
+docker-compose up -d
+```
+
+To stop:
+``` Sh
+docker-compose down
+```
+
+From the root of the project run migrations
 
 To restore all the nuget packages
 ```sh
