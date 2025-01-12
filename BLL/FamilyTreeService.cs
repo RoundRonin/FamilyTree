@@ -3,11 +3,11 @@ using FamilyTreeBlazor.BLL.Infrastructure;
 
 namespace FamilyTreeBlazor.BLL;
 
-public class FamilyTreeService(IPersonService personService, IRelationshipService relationshipService, TreeCacheDTO treeCache) : IFamilyTreeService
+public class FamilyTreeService(IPersonService personService, IRelationshipService relationshipService, ITreeCache treeCache) : IFamilyTreeService
 {
     private readonly IPersonService _personService = personService;
     private readonly IRelationshipService _relationshipService = relationshipService;
-    private readonly TreeCacheDTO _treeCache = treeCache;
+    private readonly ITreeCache _treeCache = treeCache;
 
     public async Task InitializeTreeAsync()
     {
@@ -52,6 +52,40 @@ public class FamilyTreeService(IPersonService personService, IRelationshipServic
 
         return relatives;
     }
+    public IEnumerable<PersonDTO> GetParents(int personId)
+    {
+        if (!_treeCache.Persons.TryGetValue(personId, out var person))
+        {
+            return [];
+        }
+
+        List<PersonDTO> relatives = [];
+        relatives.AddRange(person.Parents);
+
+        return relatives;
+    }
+
+    public IEnumerable<PersonDTO> GetChildren(int personId)
+    {
+        if (!_treeCache.Persons.TryGetValue(personId, out var person))
+        {
+            return [];
+        }
+
+        List<PersonDTO> relatives = [];
+        relatives.AddRange(person.Children);
+
+        return relatives;
+    }
+    public PersonDTO? GetSpouse(int personId)
+    {
+        if (!_treeCache.Persons.TryGetValue(personId, out var person))
+        {
+            return null;
+        }
+
+        return person.Spouse;
+    }
 
     public int CalculateAncestorAgeAtBirth(int ancestorId, int descendantId)
     {
@@ -66,7 +100,12 @@ public class FamilyTreeService(IPersonService personService, IRelationshipServic
             throw new InvalidOperationException("The specified person is not a descendant of the ancestor.");
         }
 
-        return descendant.BirthDateTime.Year - ancestor.BirthDateTime.Year;
+        //if (GetAllAncestors(descendant).Contains(_personService.GetPersonById(ancestorId)))
+        //{
+        //    throw new InvalidOperationException("The specified person is not a descendant of the ancestor.");
+        //}
+
+        return ancestor.BirthDateTime.Year - descendant.BirthDateTime.Year;
     }
 
     // This method is a bruteforce solution. Testing is needed to evaluate performance and change it potentially
@@ -82,6 +121,15 @@ public class FamilyTreeService(IPersonService personService, IRelationshipServic
         var ancestors2 = GetAllAncestors(person2);
 
         return ancestors1.Intersect(ancestors2);
+    }
+    public IEnumerable<PersonDTO> GetPersonAncestors(int personId)
+    {
+        if (!_treeCache.Persons.TryGetValue(personId, out var person))
+        {
+            throw new Exception("Person not found");
+        }
+
+        return GetAllAncestors(person);
     }
 
     public async Task ResetTreeAsync()

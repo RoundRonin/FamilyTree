@@ -5,14 +5,14 @@ using FamilyTreeBlazor.BLL.Infrastructure;
 
 namespace FamilyTreeBlazor.BLL;
 
-public class PersonService(IRepository<Person> personRepository, TreeCacheDTO treeCache) : IPersonService
+public class PersonService(IRepository<Person> personRepository, ITreeCache treeCache) : IPersonService
 {
     private readonly IRepository<Person> _personRepository = personRepository;
-    private readonly TreeCacheDTO _treeCache = treeCache;
+    private readonly ITreeCache _treeCache = treeCache;
 
-    public async Task AddPersonAsync(PersonDTO person)
+    public async Task<int> AddPersonAsync(PersonDTO person)
     {
-        var entity = new Person(person.Name, person.BirthDateTime, person.Sex);
+        var entity = new Person(person.Name, person.BirthDateTime.ToUniversalTime(), person.Sex);
         await _personRepository.AddAsync(entity);
 
         person.Id = entity.Id;
@@ -22,6 +22,7 @@ public class PersonService(IRepository<Person> personRepository, TreeCacheDTO tr
         }
 
         _treeCache.Persons[person.Id.Value] = person;
+        return person.Id.Value;
     }
 
     public PersonDTO? GetPersonById(int id)

@@ -1,0 +1,59 @@
+﻿@using FamilyTreeBlazor.presentation.Components.Elements
+@using FamilyTreeBlazor.presentation.Models
+@using FamilyTreeBlazor.BLL.DTOs
+@using FamilyTreeBlazor.presentation.Controllers.Interfaces
+@inject IAppStateContext AppStateContext
+@inject IPersonController PersonController
+
+<h3>Ancestor age</h3>
+
+<h5>Person</h5>
+<PersonInfo Person=Person />
+
+<br />
+<h5>Ancestor</h5>
+<PersonInfo Person=Ancestor />
+
+<hr />
+<h5>Ancestor's age at the moment of person's birth</h5>
+@if (CalculatedAge != null)
+{
+    <LabelValuePair Label="result" Value=@CalculatedAge.ToString() />
+}
+else
+{
+    <LabelValuePair Label="result" Value="unable to calculate age" />
+}
+
+@code {
+    [Parameter]
+    public required Person Person { get; set; }
+
+    [Parameter]
+    public required Person Ancestor { get; set; }
+
+    private int? CalculatedAge;
+
+    private void GetAncestorAge()
+    {
+        CalculatedAge = PersonController.GetAncestorAge(Ancestor.Id, Person.Id);
+        if (CalculatedAge != null) CalculatedAge = (int)Math.Abs((decimal)CalculatedAge);
+    }
+
+    protected override void OnInitialized()
+    {
+        AppStateContext.OnChange += OnAppStateChange;
+        GetAncestorAge();
+    }
+
+    private void OnAppStateChange()
+    {
+        GetAncestorAge();
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        AppStateContext.OnChange -= OnAppStateChange;
+    }
+}

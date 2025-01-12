@@ -4,7 +4,7 @@ namespace FamilyTreeBlazor.BLL.Infrastructure;
 
 public interface IPersonService
 {
-    Task AddPersonAsync(PersonDTO person);
+    Task<int> AddPersonAsync(PersonDTO person);
     PersonDTO? GetPersonById(int id);
     Task<IEnumerable<PersonDTO>> GetAllPersonsAsync();
     Task UpdatePersonAsync(PersonDTO person);

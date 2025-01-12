@@ -1,0 +1,22 @@
+﻿@page "/treeview"
+@using FamilyTreeBlazor.presentation.Controllers.Interfaces
+@inject ITreeController TreeController
+
+<div id="tree-container"></div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Initialization logic
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await TreeController.OnAfterRenderAsync(firstRender);
+    }
+
+    public void Dispose()
+    {
+        TreeController.Dispose();
+    }
+}

@@ -1,0 +1,25 @@
+﻿@using FamilyTreeBlazor.presentation.Components.Elements
+@using FamilyTreeBlazor.presentation.Models
+
+<h3>Common ancestors</h3>
+
+<h5>Person A</h5>
+<PersonInfo Person=PersonA />
+
+<br />
+<h5>Person B</h5>
+<PersonInfo Person=PersonB />
+
+<hr />
+<h5>Common ancestors</h5>
+<PersonList Label="result" List=Ancestors />
+
+@code {
+    [Parameter]
+    public Person? PersonA { get; set; }
+    [Parameter]
+    public Person? PersonB { get; set; }
+
+    [Parameter]
+    public IEnumerable<Person> Ancestors { get; set; } = [];
+}

@@ -1,0 +1,53 @@
+﻿@using FamilyTreeBlazor.presentation.Models
+@using FamilyTreeBlazor.presentation.Infrastructure
+@using FamilyTreeBlazor.presentation.Services.Commands
+@using MudBlazor
+@using System
+@inject IAppStateContext AppStateContext
+
+<div class="person-card">
+    <MudCard Class="@(State == CardState.HighlightedChosen ? "inward-border" : "")">
+        <MudCardContent Class="flex-column">
+            <div style="display: flex; flex-direction: row; justify-content: space-between">
+                <h6>@Person.Name</h6>
+                <p style="color: @(Person.Sex ? "aqua" : "pink" )">@(Person.Sex ? "M" : "F")</p>
+            </div>
+            <MudButtonGroup Color="Color.Tertiary" Variant="Variant.Outlined" FullWidth="true">
+                <MudTooltip Text="Add Child" Arrow="true" Placement="Placement.Right">
+                    <MudIconButton Disabled="@(DisabledButtons.Child)" Icon="@Icons.Material.Filled.ChildCare" OnClick="AddChild"></MudIconButton>
+                </MudTooltip>
+                <MudTooltip Text="Add Spouse" Arrow="true" Placement="Placement.Right">
+                    <MudIconButton Disabled="@(DisabledButtons.Spouse)" Icon="@Icons.Material.Filled.SupervisedUserCircle" OnClick="AddSpouse"></MudIconButton>
+                </MudTooltip>
+                <MudTooltip Text="Add Parent" Arrow="true" Placement="Placement.Right">
+                    <MudIconButton Disabled="@(DisabledButtons.Parent)" Icon="@Icons.Material.Filled.Elderly" OnClick="AddParent"></MudIconButton>
+                </MudTooltip>
+            </MudButtonGroup>
+        </MudCardContent>
+    </MudCard>
+</div>
+
+@code {
+    [Parameter]
+    public CardState State { get; set; } = CardState.Default;
+    [Parameter]
+    public required Person Person { get; set; }
+    [Parameter]
+    public DisabledRelations DisabledButtons { get; set; } = new();
+
+
+    private void AddChild()
+    {
+        AppStateContext.CurrentToolState.Fire(new SetRelationTypeCommand(Relation.Child));
+    }
+
+    private void AddSpouse()
+    {
+        AppStateContext.CurrentToolState.Fire(new SetRelationTypeCommand(Relation.Spouse));
+    }
+
+    private void AddParent()
+    {
+        AppStateContext.CurrentToolState.Fire(new SetRelationTypeCommand(Relation.Parent));
+    }
+}

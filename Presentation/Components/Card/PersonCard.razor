@@ -1,0 +1,22 @@
+﻿@using FamilyTreeBlazor.presentation.Models
+@rendermode InteractiveServer
+@inject IAppStateContext AppStateContext
+
+<div class="@(AppStateContext.DraggingOn ? "panel" : "panel-cursor")"> 
+    @AppStateContext.CurrentToolState.RenderCard(Person) 
+</div>
+
+@code {
+    [Parameter]
+    public required Person Person { get; set; }
+
+    protected override void OnInitialized()
+    {
+        AppStateContext.OnChange += StateHasChanged; // Subscribe to state changes
+    }
+
+    public void Dispose()
+    {
+        AppStateContext.OnChange -= StateHasChanged; // Unsubscribe from state changes
+    }
+}

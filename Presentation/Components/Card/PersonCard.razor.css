@@ -1,0 +1,29 @@
+﻿.panel {
+    user-select: none;
+    cursor: default;
+}
+
+.panel:hover {
+    user-select: none; 
+    cursor: grab;
+}
+
+.panel *, .panel *:hover { 
+    user-select: none; 
+    cursor: inherit;
+}
+
+.panel-coursor {
+    user-select: none; 
+    cursor: default;
+}
+
+.panel-coursor:hover {
+    user-select: none; 
+    cursor: default;
+}
+
+.panel-coursor *, .panel-coursor *:hover { 
+    user-select: none; 
+    cursor: default;
+}

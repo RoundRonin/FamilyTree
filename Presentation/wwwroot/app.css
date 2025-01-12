@@ -1,9 +1,33 @@
+:root { 
+    --primary-color: #6188fd;
+    --secondary-color: #79abf5;
+    --background-color: #0d0f12; 
+    --secondary-background-color: #13161b; 
+    --dots-background-color: #222936; 
+    --text-color: #e1e1e1;
+    --secondary-text-color: #acacac;
+    --link-color: #a4c7e6;
+
+    --Primary: #7e6fff;
+    --Secondary: #19A98C;
+
+    --header-size: 4rem;
+}
+
 html, body {
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-family: 'Roboto', sans-serif;
+    color: var(--text-color);
+
+    height: 100%;
+    margin: 0;
+    padding: 0;
+
+    overflow: hidden;
 }
 
 a, .btn-link {
-    color: #006bb7;
+    color: var(--link-color);
+    text-decoration: none;
 }
 
 .btn-primary {
@@ -14,10 +38,6 @@ a, .btn-link {
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-.content {
-    padding-top: 1.1rem;
 }
 
 h1:focus {
@@ -48,4 +68,25 @@ h1:focus {
 
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
+}
+
+.outward-border {
+    border: none; /* Remove the default border */
+    box-shadow: 0 0 0 3px var(--Primary); /* Adjust the color and width as needed */
+}
+ 
+.highlight-border {
+    border: 2px solid var(--Primary); /* Customize this as per your needs */
+}
+
+.inward-border {
+    border: none; /* Remove the default border */
+    outline: 0.5rem solid var(--Secondary); /* Adjust the color and width as needed */
+    outline-offset: -0.5rem; /* Negative value to move the border inward */
+}
+
+.common-ancestor-border {
+    border: none; /* Remove the default border */
+    outline: 0.5rem solid pink; /* Adjust the color and width as needed */
+    outline-offset: -0.5rem; /* Negative value to move the border inward */
 }

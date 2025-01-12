@@ -1,0 +1,30 @@
+﻿@using FamilyTreeBlazor.presentation.Models
+
+@code {
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public IEnumerable<Person>? List { get; set; }
+}
+
+<div class="line">
+    <p class="label">@Label</p>
+    @if (List != null)
+    {
+        <div class="list">
+            @if (List.Count() == 0)
+            {
+                <p class="value">I am sad and alone...</p>
+            } else
+            {
+                @for(int i = 0; i < List.Count() - 1; ++i)
+                {
+                    <p class="value">@List.ElementAt(i).Name,</p>
+                }
+                <p class="value">@List.Last().Name</p>
+            }
+        </div>
+    }
+    else
+    {
+        <p class="value">No persons available.</p>
+    }
+</div>

@@ -1,0 +1,38 @@
+﻿@using FamilyTreeBlazor.BLL.DTOs
+@using FamilyTreeBlazor.presentation.Controllers.Interfaces
+@using FamilyTreeBlazor.presentation.Models
+@inject IAppStateContext AppStateContext
+@inject IPersonController PersonController
+
+<h3>View mode</h3>
+
+<h5>Peronal info</h5>
+<PersonInfo Person=@PersonController.GetPerson(PersonId) />
+<hr />
+<h5>Relations info</h5>
+<LabelValuePair Label="spouse" Value=@(Spouse != null ? Spouse.Name : "None") />
+<PersonList Label="kids" List=ListKids />
+<PersonList Label="parents" List=ListParents />
+
+@code {
+    [Parameter]
+    public required int PersonId { get; set; }
+
+    [Parameter]
+    public Person? Spouse { get; set; }
+
+    [Parameter]
+    public IEnumerable<Person> ListKids { get; set; } = [];
+    [Parameter]
+    public IEnumerable<Person> ListParents { get; set; } = [];
+
+    protected override void OnInitialized()
+    {
+        AppStateContext.OnChange += StateHasChanged; // Subscribe to state changes
+    }
+
+    public void Dispose()
+    {
+        AppStateContext.OnChange -= StateHasChanged; // Unsubscribe from state changes
+    }
+}

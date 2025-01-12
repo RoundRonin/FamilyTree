@@ -1,0 +1,32 @@
+﻿body {
+}
+
+.line {
+    display: flex;
+    flex-direction: column;
+
+    justify-items: flex-start;
+}
+
+    .label {
+        font: 300;
+        color: var(--secondary-text-color);
+        margin: 0.1rem;
+    }
+
+    .value {
+        font: bold;
+        margin: 1px;
+    }
+
+.list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.1rem;
+
+    background-color: var(--background-color);
+    border-radius: 1rem;
+    padding: 0.5rem;
+
+    margin-top: 0.5rem;
+}

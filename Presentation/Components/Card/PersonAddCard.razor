@@ -1,0 +1,33 @@
+﻿@using FamilyTreeBlazor.presentation.Models
+@using FamilyTreeBlazor.presentation.Infrastructure
+@using FamilyTreeBlazor.presentation.Controllers.Interfaces;
+@using MudBlazor
+@using System
+@inject IPersonController PersonController
+
+<div class="person-card">
+    <MudCard>
+        <MudCardContent Class="flex-column">
+            <div style="display: flex; flex-direction: row; justify-content: space-between">
+                <h6>@Person.Name</h6>
+                <p style="color: @(Person.Sex ? "aqua" : "pink" )">@(Person.Sex ? "M" : "F")</p>
+            </div>
+            <MudButton Disabled="@DisableButton" Variant="Variant.Filled" FullWidth="true" style="color: black"
+                Color="Color.Tertiary" OnClick="() => CreateRelation()">Add relation</MudButton>
+        </MudCardContent>
+    </MudCard>
+</div>
+
+@code {
+    [Parameter]
+    public CardState State { get; set; } = CardState.Default;
+    [Parameter]
+    public required Person Person { get; set; }
+    [Parameter]
+    public bool DisableButton { get; set; }
+
+    private void CreateRelation()
+    {
+        PersonController.CreateRelation(Person.Id);
+    }
+}

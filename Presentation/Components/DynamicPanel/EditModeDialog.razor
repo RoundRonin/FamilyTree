@@ -1,0 +1,29 @@
+﻿@using FamilyTreeBlazor.BLL.DTOs
+@using FamilyTreeBlazor.presentation.Models
+@using FamilyTreeBlazor.presentation.Infrastructure
+@using FamilyTreeBlazor.presentation.Services.Commands
+@inject IAppStateContext AppStateContext
+
+<h3>Edit mode: @Text</h3>
+
+<p>Choose existing person as a @Text or create a new one:</p>
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => CreatePerson()">Create a @Text</MudButton>
+<MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="() => Cancel()">Cancel</MudButton>
+
+@code {
+    [Parameter]
+    public string Text { get; set; } = "Default";
+    // [Parameter]
+    // public required Person Person { get; set; }
+
+
+    public void CreatePerson()
+    {
+        AppStateContext.CurrentToolState.Fire(new CreatePersonCommand());
+    }
+
+    public void Cancel()
+    {
+        AppStateContext.CurrentToolState.Fire(new CancelCommand());
+    }
+}

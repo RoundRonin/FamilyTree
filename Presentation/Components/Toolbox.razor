@@ -1,0 +1,59 @@
+﻿@rendermode InteractiveServer
+@using FamilyTreeBlazor.presentation.Infrastructure
+@using System.Diagnostics
+@inject IPresentationService PresentationService 
+@inject IAppStateContext AppStateContext
+
+<div class="toolbox-container">
+    <div class="main-block">
+        <MudTooltip Text="Toggle Dragging" Arrow="true" Placement="Placement.Right">
+            <MudFab Color="@(AppStateContext.DraggingOn ? Color.Secondary : Color.Dark)" Size="Size.Medium" StartIcon="@Icons.Material.Filled.AdsClick" @onclick="ToggleDragging"/>
+        </MudTooltip>
+        <br />
+        <MudTooltip Text="View info" Arrow="true" Placement="Placement.Right">
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.RemoveRedEye" @onclick="() => SelectTool(ToolState.ViewTool)"/>
+        </MudTooltip>
+        <MudTooltip Text="Ancestor Age" Arrow="true" Placement="Placement.Right">
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowUpward" @onclick="() => SelectTool(ToolState.AncestorAgeTool)"/>
+        </MudTooltip>
+        <MudTooltip Text="Common Ancestors" Arrow="true" Placement="Placement.Right">
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.PersonSearch" @onclick="() => SelectTool(ToolState.CommonAncestorsTool)"/>
+        </MudTooltip>
+        <MudTooltip Text="Edit tree" Arrow="true" Placement="Placement.Right">
+            <MudFab Color="Color.Tertiary" StartIcon="@Icons.Material.Filled.Edit" @onclick="() => SelectTool(ToolState.EditTool)"/>
+        </MudTooltip>
+    </div>
+    <div class="delete">
+        <MudTooltip Text="Delete Tree" Arrow="true" Placement="Placement.Right">
+            <MudFab Color="Color.Dark" StartIcon="@Icons.Material.Filled.DeleteForever" @onclick="DeleteTree"/>
+        </MudTooltip>
+    </div>
+</div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        AppStateContext.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        AppStateContext.OnChange -= StateHasChanged;
+    }
+
+    private void SelectTool(ToolState toolState)
+    {
+        Debug.WriteLine("Selecting Tool...");
+        AppStateContext.RequestChangeToolState(toolState);
+    }
+
+    private void ToggleDragging() 
+    { 
+        AppStateContext.DraggingOn = !AppStateContext.DraggingOn; 
+    }
+
+    private void DeleteTree()
+    {
+        PresentationService.DeleteTree();
+    }
+}

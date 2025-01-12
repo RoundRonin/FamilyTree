@@ -365,3 +365,8 @@ FodyWeavers.xsd
 .env
 .VSCode
 */Migrations/*
+/MyApplication
+/Presentation/JavaScript/dist/FamilyTreeBlazor.Components.js
+/Presentation/wwwroot/FamilyTreeBlazor.Components.js
+/Temp
+/Presentation_OLD
